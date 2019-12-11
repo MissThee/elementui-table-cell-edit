@@ -773,15 +773,6 @@
     display: none;
   }
 
-  .changed-cell-info {
-    background-image: url('/img/grid/pre_update_corner.png');
-    background-position: 0 0;
-    background-size: 8px;
-    background-repeat: no-repeat;
-    /*font-weight: bold;*/
-    /*color: #409EFF;*/
-  }
-
   /deep/ .wrong-cell-info {
     font-weight: bold;
     color: #F56C6C;
@@ -794,7 +785,7 @@
 
   /deep/ .pre-add-row /deep/ td {
     /*background-color: red !important;*/
-    background-image: url('/img/grid/pre_add_corner.png') !important;
+    background-image: url('./static/img/grid/pre_add_corner.png') !important;
     background-position: 0 0;
     background-size: 8px;
     background-repeat: no-repeat;
@@ -802,7 +793,7 @@
 
   .el-table /deep/ .pre-delete-row /deep/ td {
     /*background-color: red !important;*/
-    background-image: url('/img/grid/pre_delete_corner.png') !important;
+    background-image: url('./static/img/grid/pre_delete_corner.png') !important;
     background-position: 0 0;
     background-size: 8px;
     background-repeat: no-repeat;
@@ -810,7 +801,7 @@
 
   .el-table /deep/ .pre-update-cell {
     /*background-color: red !important;*/
-    background-image: url('/img/grid/pre_update_corner.png');
+    background-image: url('./static/img/grid/pre_update_corner.png');
     background-position: 0 0;
     background-size: 8px;
     background-repeat: no-repeat;
