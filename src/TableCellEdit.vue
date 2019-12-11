@@ -203,7 +203,7 @@
     },
 
     methods: {
-      tableRowClassName({ row, rowIndex }) {
+      tableRowClassName({row, rowIndex}) {
         if (row._hiddenRowId.startsWith('A')) {
           return 'pre-add-row';
         }
@@ -212,7 +212,7 @@
         }
         return '';
       },
-      tableCellClassName({ row, column, rowIndex, columnIndex }) {
+      tableCellClassName({row, column, rowIndex, columnIndex}) {
         let classNames = '';
         if (this.changedCellInfo[row._hiddenRowId] && this.changedCellInfo[row._hiddenRowId][column.id]) {
           classNames += ' pre-update-cell';        //被修改的角标样式
@@ -584,32 +584,32 @@
             switch (item._hiddenRowId.substr(0, 1)) {
               case 'A':
                 delete itemTmp._hiddenRowId;
-                submitData.update.push(itemTmp);//收集添加对象集合
+                submitData.add.push(itemTmp);//收集添加对象集合
                 break;
               case 'D':
                 if (itemTmp.id !== undefined) {
                   submitData.delete.push(itemTmp.id);//收集删除id集合
                 }
                 break;
+              default:
+                for (let rowId in this.changedCellInfo) {
+                  if (item._hiddenRowId === rowId) {
+                    let itemTmp = {};
+                    this.changedCellInfo[rowId]['id'] = 'id';//更新的行 附加id字段
+                    for (let columnId in this.changedCellInfo[rowId]) {
+                      if (this.changedCellInfo[rowId].hasOwnProperty(columnId)) {
+                        let propId = this.changedCellInfo[rowId][columnId];
+                        itemTmp[propId] = item[propId];
+                      }
+                    }
+                    submitData.update.push(itemTmp);//收集更新对象集合
+                  }
+                }
+                break;
             }
           }
         });
-        for (let rowId in this.changedCellInfo) {
-          let itemTmp = {};
-          this.changedCellInfo[rowId]['id'] = 'id';//更新的行 附加id字段
-          for (let columnId in this.changedCellInfo[rowId]) {
 
-            if (this.changedCellInfo[rowId].hasOwnProperty(columnId)) {
-              let propId = this.changedCellInfo[rowId][columnId];
-              for (let row of this.tableData) {
-                if (row._hiddenRowId === rowId) {
-                  itemTmp[propId] = row[propId];
-                }
-              }
-            }
-          }
-          submitData.update.push(itemTmp);//收集更新对象集合
-        }
         console.log('提交了信息', submitData);
 
         this.$notify({
