@@ -27,7 +27,10 @@ module.exports = {
         'src': resolve('./src')
       }
     },
-    externals: {},
+    externals: {
+      'vue': 'Vue',
+      'element-ui': 'ELEMENT',
+    },
     devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : 'none'
   },
 };
