@@ -1,0 +1,33 @@
+{
+  "name": "elementui-table-cell-edit",
+  "version": "1.0.0",
+  "description": "A Vue.js project",
+  "author": "MissThee",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --port 8200",
+    "build": "vue-cli-service build",
+    "inspect": "vue inspect"
+  },
+  "dependencies": {
+    "axios": "^0.18.1",
+    "babel-polyfill": "^6.26.0",
+    "css-loader": "^3.1.0",
+    "element-ui": "^2.13.0",
+    "vue": "^2.6.10"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.10.0",
+    "@vue/cli-service": "^3.10.0",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}
