@@ -635,7 +635,7 @@
 
           this.tableData.forEach(row => {
             if (!row.id) {
-              row.id = (this.lastTableId++);
+              row.id = (++this.lastTableId);
             }
           });
         }
