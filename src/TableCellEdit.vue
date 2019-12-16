@@ -694,7 +694,7 @@
       },
       //页面跳转提示表单未保存
       preventLeavingPage() {
-        window.onbeforeunload = function () {
+        window.onbeforeunload = () => {
           if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
             return "退出将不保存您填写的数据，确定退出吗？";
           }
