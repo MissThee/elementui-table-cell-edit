@@ -198,6 +198,7 @@
       };
     },
     created() {
+      this.preventLeavingPage();
       this.initCanEditColumns();
       this.requestTableData();
     },
@@ -287,6 +288,7 @@
       },
       //完成编辑（清除单元格编辑状态，清除按键监听事件）
       finishEdit() {
+        this.editCellBlurHandler();
         this.editingCellInfo = {
           rowId: undefined,
           columnId: undefined,
@@ -689,10 +691,29 @@
           }];
         }
         this.initTableDataAndTableDataOrigin();
+      },
+      //页面跳转提示表单未保存
+      preventLeavingPage() {
+        window.onbeforeunload = function () {
+          if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
+            return "退出将不保存您填写的数据，确定退出吗？";
+          }
+        };
       }
     },
-
-
+    //使用router时，路由跳转提示表单编辑未保存
+    beforeRouteLeave(to, from, next) {
+      if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
+        const answer = window.confirm('离开将丢失对表单的修改，确定离开本页？');
+        if (answer) {
+          next();
+        } else {
+          next(false);
+        }
+      } else {
+        next();
+      }
+    },
     deactivated() {
       this.setEditKeyListener(false);
     },
