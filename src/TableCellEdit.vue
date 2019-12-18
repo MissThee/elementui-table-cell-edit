@@ -91,9 +91,9 @@
                 <el-option v-for="selectItem in item.selectList" :key="selectItem.value" :label="selectItem.label" :value="selectItem.value"/>
               </el-select>
             </div>
-            <div style="margin: 0 0 0 3px;" :style="{width: 52/(scope.row._hiddenRowId.startsWith('A')?2:1)+'px'}">
+            <div style="margin: 0 0 0 3px;" :style="{width: 52/(getRowState(scope.row._hiddenRowId)==='add'?2:1)+'px'}">
               <el-popconfirm @onConfirm="revokeEditingValueHandler" title="确定撤销更改？">
-                <el-button v-if="!scope.row._hiddenRowId.startsWith('A')" slot="reference" style="margin: 0;" title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
+                <el-button v-if="getRowState(scope.row._hiddenRowId)!=='delete'" slot="reference" style="margin: 0;" title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
               </el-popconfirm>
               <el-button style="margin: 0;" title="完成编辑(Esc)" type="success" plain size="mini" icon="el-icon-check" @click="finishEdit"/>
               <!--@mousedown.native="onRevokeButtonMouseDown($event,scope)"用于Button可防止编辑单元格失去焦点，但在弹出式组件的按钮中无效-->
@@ -105,8 +105,8 @@
       <el-table-column width="100px" label="选择-text" prop="selectName"/>
       <el-table-column width="100px" fixed="right" align="center" label="操作">
         <template slot-scope="scope">
-          <el-button style="font-size: 12px" :type="scope.row._hiddenRowId.startsWith('D')?'success':'danger'" plain size="mini" :icon="scope.row._hiddenRowId.startsWith('D')?'el-icon-refresh-left':'el-icon-delete'" @click="deleteRowHandler(scope.row)">
-            {{scope.row._hiddenRowId.startsWith('D')?'取消':'删除'}}
+          <el-button style="font-size: 12px" :type="getRowState(scope.row._hiddenRowId)==='delete'?'success':'danger'" plain size="mini" :icon="getRowState(scope.row._hiddenRowId)==='delete'?'el-icon-refresh-left':'el-icon-delete'" @click="deleteRowHandler(scope.row)">
+            {{getRowState(scope.row._hiddenRowId)==='delete'?'取消':'删除'}}
           </el-button>
         </template>
       </el-table-column>
@@ -204,7 +204,21 @@
     },
 
     methods: {
-      tableRowClassName({row, rowIndex}) {
+      getRowState(_hiddenRowId){
+        if(!_hiddenRowId){
+          return '';
+        }
+        if(_hiddenRowId.startsWith('D')){
+          return 'delete';
+        }
+        if(_hiddenRowId.startsWith('A')){
+          return 'add';
+        }
+      },
+      tableRowClassName({ row, rowIndex }) {
+        if(!row._hiddenRowId){
+          return '';
+        }
         if (row._hiddenRowId.startsWith('A')) {
           return 'pre-add-row';
         }
