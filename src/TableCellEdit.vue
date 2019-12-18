@@ -318,10 +318,11 @@
           //以单元格row._hiddenRowId，column.id，发现单元格。
           let cellEditorELArray = this.$refs[this.buildCellRef(_hiddenRowId, columnId)];
           if (cellEditorELArray && cellEditorELArray.length > 0) {
+            if (cellEditorELArray[0].focus) {
+              cellEditorELArray[0].focus();
+            }
             if (cellEditorELArray[0].select) {
               cellEditorELArray[0].select();
-            } else if (cellEditorELArray[0].focus) {
-              cellEditorELArray[0].focus();
             }
           }
         });
