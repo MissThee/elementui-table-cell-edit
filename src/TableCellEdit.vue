@@ -65,15 +65,16 @@
                         @blur="editCellBlurHandler"
                         :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
                         v-model="scope.row[item.propId]"/>
-              <el-tooltip v-model="showValueCheckMsg" placement="top" manual content="此值需要为数字" effect="dark">
+<!--              <el-tooltip v-model="showValueCheckMsg" placement="top" manual content="此值需要为数字" effect="dark">-->
                 <el-input v-if="item.editType==='InputNumber'"
+                          type="Number"
                           @blur="editCellBlurHandler"
                           @focus="checkEditingValueIsNaN"
                           @input="checkEditingValueIsNaN"
                           :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
                           v-model="scope.row[item.propId]"
                           placeholder="输入数字" :min="0" :max="100000000" :controls="false"/>
-              </el-tooltip>
+<!--              </el-tooltip>-->
               <el-date-picker v-if="item.editType==='DatePicker'"
                               @blur="editCellBlurHandler"
                               :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
@@ -139,7 +140,7 @@
         // 错误值单元格集合，结构同上
         wrongCellInfo: {},
         tableColumnProperties: [],//table中各个列信息。配合Tab键切换单元格使用
-        showValueCheckMsg: false,
+        // showValueCheckMsg: false,
         columnOption: [
           {
             columnKey: 'name',
@@ -330,7 +331,7 @@
       //编辑中单元格失去焦点事件
       editCellBlurHandler() {
         this.$nextTick(() => {//消除错误值提示
-          this.showValueCheckMsg = false;
+          // this.showValueCheckMsg = false;
         });
         let props = this.getEditingCellProps();
         switch (props.editType) {
@@ -490,7 +491,7 @@
         let newValue = row[propId];
         if (newValue && newValue !== '') {
           let result = isNaN(newValue);
-          this.showValueCheckMsg = result;
+          // this.showValueCheckMsg = result;
           return result;
         }
       },
@@ -870,5 +871,13 @@
   /*  background-color: #eaf2ff;*/
   /*}*/
 
+  /*input输入框为number类型时不显示箭头*/
+  /deep/ input::-webkit-outer-spin-button,
+  /deep/ input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
 
+  /deep/ input[type="number"] {
+    -moz-appearance: textfield;
+  }
 </style>
