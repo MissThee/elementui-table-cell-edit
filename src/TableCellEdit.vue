@@ -497,19 +497,18 @@
       },
       //检查编辑中单元格 新值与原值是否相同
       checkEditingValueIsChanged() {
-        let props = this.getEditingCellProps();
-        let values = [...new Set(Object.values(props))];
-        for (let value of values) {
-          let prop = value;
-          let rowOrigin = this.getEditingRowOrigin();
-          if (!rowOrigin) {
-            return true;
-          }
-          let row = this.getEditingRow();
-          if (!row) {
-            return true;
-          }
-          if (String(rowOrigin[prop]) !== String(row[prop])) {
+        let columnOption = this.getEditingCellProps();
+        let dataProps = [columnOption.propId,columnOption.propText];
+        let row = this.getEditingRow();
+        if (!row) {
+          return true;
+        }
+        let rowOrigin = this.getEditingRowOrigin();
+        if (!rowOrigin) {
+          return true;
+        }
+        for (let dataProp of dataProps) {
+          if (String(rowOrigin[dataProp]) !== String(row[dataProp])) {
             return true;
           }
         }
