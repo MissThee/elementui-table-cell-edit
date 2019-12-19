@@ -1,6 +1,9 @@
 <template>
   <div>
     <div style="padding: 5px">
+      <el-form-item>
+        <el-button class="custom-button-in-toolbar " type="primary" plain size="mini" icon="el-icon-refresh" @click="fetchData">刷新</el-button>
+      </el-form-item>
       <el-button type="primary" plain size="mini" icon="el-icon-circle-plus" @click="addNewRowHandler">新增</el-button>
       <el-button type="success" plain size="mini" icon="el-icon-success" @click="submitHandler">提交保存</el-button>
       <el-popover trigger="hover" placement="bottom">
@@ -65,16 +68,16 @@
                         @blur="editCellBlurHandler"
                         :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
                         v-model="scope.row[item.propId]"/>
-<!--              <el-tooltip v-model="showValueCheckMsg" placement="top" manual content="此值需要为数字" effect="dark">-->
-                <el-input v-if="item.editType==='InputNumber'"
-                          type="Number"
-                          @blur="editCellBlurHandler"
-                          @focus="checkEditingValueIsNaN"
-                          @input="checkEditingValueIsNaN"
-                          :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
-                          v-model="scope.row[item.propId]"
-                          placeholder="输入数字" :min="0" :max="100000000" :controls="false"/>
-<!--              </el-tooltip>-->
+              <!--              <el-tooltip v-model="showValueCheckMsg" placement="top" manual content="此值需要为数字" effect="dark">-->
+              <el-input v-if="item.editType==='InputNumber'"
+                        type="Number"
+                        @blur="editCellBlurHandler"
+                        @focus="checkEditingValueIsNaN"
+                        @input="checkEditingValueIsNaN"
+                        :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
+                        v-model="scope.row[item.propId]"
+                        placeholder="输入数字" :min="0" :max="100000000" :controls="false"/>
+              <!--              </el-tooltip>-->
               <el-date-picker v-if="item.editType==='DatePicker'"
                               @blur="editCellBlurHandler"
                               :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
@@ -93,7 +96,7 @@
               </el-select>
             </div>
             <div style="margin: 0 0 0 3px;" :style="{width: 52/(getRowState(scope.row._hiddenRowId)==='add'?2:1)+'px'}">
-              <el-popconfirm @onConfirm="revokeEditingValueHandler" title="确定撤销更改？">
+              <el-popconfirm placement="right" @onConfirm="revokeEditingValueHandler" title="确定撤销更改？">
                 <el-button v-if="getRowState(scope.row._hiddenRowId)!=='delete'" slot="reference" style="margin: 0;" title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
               </el-popconfirm>
               <el-button style="margin: 0;" title="完成编辑(Esc)" type="success" plain size="mini" icon="el-icon-check" @click="finishEdit"/>
@@ -201,23 +204,23 @@
     created() {
       this.preventLeavingPage();
       this.initCanEditColumns();
-      this.requestTableData();
+      this.fetchData();
     },
 
     methods: {
-      getRowState(_hiddenRowId){
-        if(!_hiddenRowId){
+      getRowState(_hiddenRowId) {
+        if (!_hiddenRowId) {
           return '';
         }
-        if(_hiddenRowId.startsWith('D')){
+        if (_hiddenRowId.startsWith('D')) {
           return 'delete';
         }
-        if(_hiddenRowId.startsWith('A')){
+        if (_hiddenRowId.startsWith('A')) {
           return 'add';
         }
       },
-      tableRowClassName({ row, rowIndex }) {
-        if(!row._hiddenRowId){
+      tableRowClassName({row, rowIndex}) {
+        if (!row._hiddenRowId) {
           return '';
         }
         if (row._hiddenRowId.startsWith('A')) {
@@ -349,8 +352,11 @@
                 newText = selectItem.label;
               }
             }
-            this.$set(row, props.propId, row[props.propId]);
-            this.$set(row, props.propText, newText);
+            //列表没有当前格子中的值不对表格中值进行更新
+            if (props.selectList.findIndex(e => e.value === row[props.propId]) >= 0) {
+              this.$set(row, props.propId, row[props.propId]);
+              this.$set(row, props.propText, newText);
+            }
             break;
         }
         this.setEditingCellInfo(this.changedCellInfo, this.checkEditingValueIsChanged());
@@ -367,6 +373,7 @@
             this.$set(row, propText, rowOrigin[propText]);
           }
         }
+        // this.finishEdit();
         this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].focus();
 
       },
@@ -498,7 +505,7 @@
       //检查编辑中单元格 新值与原值是否相同
       checkEditingValueIsChanged() {
         let columnOption = this.getEditingCellProps();
-        let dataProps = [columnOption.propId,columnOption.propText];
+        let dataProps = [columnOption.propId, columnOption.propText];
         let row = this.getEditingRow();
         if (!row) {
           return true;
@@ -656,16 +663,29 @@
             }
           });
         }
-
-        this.requestTableData();
         this.resetCell();
+        this.fetchData();
       },
       //重置记录单元格标记的对象
       resetCell() {
+        this.finishEdit();
         this.changedCellInfo = {};
         this.wrongCellInfo = {};
       },
-      requestTableData() {
+      fetchData() {
+        if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
+          this.$confirm('检测到您有未提交保存的修改<br />刷新将<span style="color:#E6A23C;font-weight: bold">丢失未保存的修改</span>，是否继续？',
+            {dangerouslyUseHTMLString: true})
+            .then(() => {
+              this.doFetchData();
+            })
+            .catch(() => {
+            });
+        } else {
+          this.doFetchData();
+        }
+      },
+      doFetchData() {
         if (this.tableData.length === 0) {//TODO 模拟获取数据，与后台交接后不使用
           this.tableData = [{
             id: 1,
