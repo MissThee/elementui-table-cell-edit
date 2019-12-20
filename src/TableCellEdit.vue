@@ -97,7 +97,7 @@
             </div>
             <div style="margin: 0 0 0 3px;" :style="{width: 52/(getRowState(scope.row._hiddenRowId)==='add'?2:1)+'px'}">
               <el-popconfirm placement="right" @onConfirm="revokeEditingValueHandler" title="确定撤销更改？">
-                <el-button v-if="getRowState(scope.row._hiddenRowId)!=='delete'" slot="reference" style="margin: 0;" title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
+                <el-button v-if="getRowState(scope.row._hiddenRowId)!=='add'" slot="reference" style="margin: 0;" title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
               </el-popconfirm>
               <el-button style="margin: 0;" title="完成编辑(Esc)" type="success" plain size="mini" icon="el-icon-check" @click="finishEdit"/>
               <!--@mousedown.native="onRevokeButtonMouseDown($event,scope)"用于Button可防止编辑单元格失去焦点，但在弹出式组件的按钮中无效-->
