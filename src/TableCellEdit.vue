@@ -1,117 +1,136 @@
 <template>
   <div>
-    <div style="padding: 5px">
-      <el-form-item>
+    <el-form inline style="height:20px;">
+      <el-form-item style="margin-bottom: 0">
         <el-button class="custom-button-in-toolbar " type="primary" plain size="mini" icon="el-icon-refresh" @click="fetchData">刷新</el-button>
       </el-form-item>
-      <el-button type="primary" plain size="mini" icon="el-icon-circle-plus" @click="addNewRowHandler">新增</el-button>
-      <el-button type="success" plain size="mini" icon="el-icon-success" @click="submitHandler">提交保存</el-button>
-      <el-popover trigger="hover" placement="bottom">
-        <div style="height: 25px">
-          <span style="display: inline-block;font-weight: bold;width: 70px">角标颜色</span>
-          <el-tag style="font-size: 12px;margin-right: 5px" size="mini">预增加</el-tag>
-          <el-tag style="font-size: 12px;margin-right: 5px" size="mini" type="warning">预修改</el-tag>
-          <el-tag style="font-size: 12px;margin-right: 5px" size="mini" type="danger">预删除</el-tag>
-        </div>
-        <div style="height: 25px">
-          <span style="font-weight: bold;color:#666">快捷键（编辑单元格时）：</span>
-        </div>
-        <div style="margin-left: 5px">
+      <el-form-item style="margin-bottom: 0">
+        <el-button type="primary" plain size="mini" icon="el-icon-circle-plus" @click="addNewRowHandler">新增</el-button>
+      </el-form-item>
+      <el-form-item style="margin-bottom: 0">
+        <el-button type="success" plain size="mini" icon="el-icon-success" @click="submitHandler">提交保存</el-button>
+      </el-form-item>
+      <el-form-item style="float:right;margin-bottom: 0">
+        <el-popover trigger="hover" placement="bottom">
+          <el-button slot="reference" type="warning" plain size="mini"><i class="el-icon-question"/>使用帮助</el-button>
           <div style="height: 25px">
-            <span style="display: inline-block;font-weight: bold;width: 80px">下一单元格</span>
-            <el-tag style="font-size: 12px;margin:0 5px" size="mini">Tab</el-tag>
+            <span style="color:#ff7435;display: inline-block;font-weight: bold;">所有操作均在“提交保存”后生效</span>
           </div>
           <div style="height: 25px">
-            <span style="display: inline-block;font-weight: bold;width: 80px">上一单元格</span>
-            <el-tag style="font-size: 12px;margin:0 5px" size="mini">Shift</el-tag>
-            <span>+</span>
-            <el-tag style="font-size: 12px;margin:0 5px" size="mini">Tab</el-tag>
+            <span style="display: inline-block;font-weight: bold;width: 70px">角标颜色</span>
+            <el-tag style="font-size: 12px;margin-right: 5px" size="mini">预增加</el-tag>
+            <el-tag style="font-size: 12px;margin-right: 5px" size="mini" type="warning">预修改</el-tag>
+            <el-tag style="font-size: 12px;margin-right: 5px" size="mini" type="danger">预删除</el-tag>
           </div>
           <div style="height: 25px">
-            <span style="display: inline-block;font-weight: bold;width: 80px">撤销修改</span>
-            <el-tag style="font-size: 12px;margin:0 5px" size="mini">Shift</el-tag>
-            <span>+</span>
-            <el-tag style="font-size: 12px;margin:0 5px" size="mini">Backspace</el-tag>
+            <span style="font-weight: bold;color:#666">快捷键（编辑单元格时）：</span>
           </div>
-          <div style="height: 25px">
-            <span style="display: inline-block;font-weight: bold;width: 80px">完成编辑</span>
-            <el-tag style="font-size: 12px;margin:0 5px" size="mini">Esc</el-tag>
+          <div style="margin-left: 5px">
+            <div style="height: 25px">
+              <span style="display: inline-block;font-weight: bold;width: 80px">下一单元格</span>
+              <el-tag style="font-size: 12px;margin:0 5px" size="mini">Tab</el-tag>
+            </div>
+            <div style="height: 25px">
+              <span style="display: inline-block;font-weight: bold;width: 80px">上一单元格</span>
+              <el-tag style="font-size: 12px;margin:0 5px" size="mini">Shift</el-tag>
+              <span>+</span>
+              <el-tag style="font-size: 12px;margin:0 5px" size="mini">Tab</el-tag>
+            </div>
+            <div style="height: 25px">
+              <span style="display: inline-block;font-weight: bold;width: 80px">撤销修改</span>
+              <el-tag style="font-size: 12px;margin:0 5px" size="mini">Shift</el-tag>
+              <span>+</span>
+              <el-tag style="font-size: 12px;margin:0 5px" size="mini">Backspace</el-tag>
+            </div>
+            <div style="height: 25px">
+              <span style="display: inline-block;font-weight: bold;width: 80px">完成编辑</span>
+              <el-tag style="font-size: 12px;margin:0 5px" size="mini">Esc</el-tag>
+            </div>
           </div>
-        </div>
-        <el-button slot="reference" type="warning" plain size="mini" style="float: right;"><i class="el-icon-question"/>使用帮助</el-button>
-      </el-popover>
-    </div>
+        </el-popover>
+      </el-form-item>
+    </el-form>
     <el-table
+      :data="tableData"
       ref="Table"
       border
-      :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
-      :height="500"
-      @cell-click="cellClickHandler"
+      height="400px"
       :row-class-name="tableRowClassName"
       :cell-class-name="tableCellClassName"
     >
-      <el-table-column label="日期" prop="date"/>
-      <el-table-column v-for="item in columnOption" :column-key="item.columnKey" :label="item.label" :key="item.prop" :prop="item.propText">
-        <template slot="header" slot-scope="scope">
-          <div style="float: left;width: 60px">{{scope.column.label}}</div>
-          <!--        <div style="overflow: hidden">-->
-          <!--          <el-input v-model="search" size="medium" placeholder="关键字过滤"/>-->
-          <!--        </div>-->
-        </template>
+      <el-table-column fixed="left" type="index" width="50px" label="序号" align="center"/>
+      <el-table-column v-for="item in columnOption" :min-width="item.minWidth" :width="item.width" :column-key="item.columnKey" :label="item.label" :key="item.prop" :prop="item.propText">
+        <!--        <template slot="header" slot-scope="scope">-->
+        <!--          <div style="float: left;">{{scope.column.label}}</div>-->
+        <!--        </template>-->
         <template slot-scope="scope">
-          <!--style="background:url('main/img/grid/dirty.png') 0 0 no-repeat;"原打算用角落红标标识修改的单元单元格，但不能放置单元格左上角，暂不使用-->
-          <div v-show="!(isEditingCell(scope)&&item.editType)">{{scope.row[item.propText]}}</div>
-          <div style="display: table" v-if="isEditingCell(scope)&&item.editType">
+          <div @click="cellClickHandler(scope.row,item)" style="min-height: 30px" :style="{color:item.color}" v-show="!isEditingCell(scope.row._hiddenRowId,item.columnKey,item.editType)">
+            <span>{{item.formatter?item.formatter(scope.row[item.propText]):scope.row[item.propText]}}</span>
+          </div>
+          <div style="display: table" v-if="isEditingCell(scope.row._hiddenRowId,item.columnKey,item.editType)">
             <div style="display: table-cell;width: 100%">
-              <el-input v-if="item.editType==='Input'"
-                        @blur="editCellBlurHandler"
-                        :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
-                        v-model="scope.row[item.propId]"/>
-              <!--              <el-tooltip v-model="showValueCheckMsg" placement="top" manual content="此值需要为数字" effect="dark">-->
-              <el-input v-if="item.editType==='InputNumber'"
-                        type="Number"
-                        @blur="editCellBlurHandler"
-                        @focus="checkEditingValueIsNaN"
-                        @input="checkEditingValueIsNaN"
-                        :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
-                        v-model="scope.row[item.propId]"
-                        placeholder="输入数字" :min="0" :max="100000000" :controls="false"/>
-              <!--              </el-tooltip>-->
+              <input v-if="item.editType==='Input'"
+                     class="el-input el-input__inner"
+                     style="width:100%"
+                     @focus="editCellFocusHandler"
+                     @blur="editCellBlurHandler"
+                     :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"
+              />
+              <input v-if="item.editType==='InputNumber'"
+                     class="el-input el-input__inner"
+                     style="width:100%"
+                     type="Number"
+                     @focus="editCellFocusHandler"
+                     @blur="editCellBlurHandler"
+                     :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"
+                     placeholder="输入数字"/>
               <el-date-picker v-if="item.editType==='DatePicker'"
+                              style="width:100%"
                               @blur="editCellBlurHandler"
-                              :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
+                              :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"
                               v-model="scope.row[item.propId]"
                               :clearable="false" size="mini" prefix-icon=" " placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd"/>
-
               <el-select v-if="item.editType==='Select'"
+                         width="100%"
                          filterable
                          @blur="editCellBlurHandler"
                          @change="editCellBlurHandler"
-                         :ref="buildCellRef(scope.row._hiddenRowId,scope.column.id)"
+                         :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"
                          v-model="scope.row[item.propId]"
                          :automatic-dropdown="true"
                          placeholder="请选择">
                 <el-option v-for="selectItem in item.selectList" :key="selectItem.value" :label="selectItem.label" :value="selectItem.value"/>
               </el-select>
+              <!--              <el-select v-if="item.editType==='SelectGroup'"-->
+              <!--                         width="100%"-->
+              <!--                         filterable-->
+              <!--                         @blur="editCellBlurHandler"-->
+              <!--                         @change="editCellBlurHandler"-->
+              <!--                         :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"-->
+              <!--                         v-model="scope.row[item.propId]"-->
+              <!--                         :automatic-dropdown="true"-->
+              <!--                         placeholder="请选择">-->
+              <!--                <el-option-group v-for="group in item.selectGroupList" :label="group.label" :key="group.value">-->
+              <!--                  <el-option style="padding-left:40px" v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value"/>-->
+              <!--                </el-option-group>-->
+              <!--              </el-select>-->
             </div>
-            <div style="margin: 0 0 0 3px;" :style="{width: 52/(getRowState(scope.row._hiddenRowId)==='add'?2:1)+'px'}">
+            <div style="margin: 0;" :style="{width:getRowState(scope.row._hiddenRowId)==='add'?0:26+'px'}">
               <el-popconfirm placement="right" @onConfirm="revokeEditingValueHandler" title="确定撤销更改？">
                 <el-button v-if="getRowState(scope.row._hiddenRowId)!=='add'" slot="reference" style="margin: 0;" title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
               </el-popconfirm>
-              <el-button style="margin: 0;" title="完成编辑(Esc)" type="success" plain size="mini" icon="el-icon-check" @click="finishEdit"/>
-              <!--@mousedown.native="onRevokeButtonMouseDown($event,scope)"用于Button可防止编辑单元格失去焦点，但在弹出式组件的按钮中无效-->
             </div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column width="100px" label="选择-id" prop="selectValue"/>
-      <el-table-column width="100px" label="选择-text" prop="selectName"/>
-      <el-table-column width="100px" fixed="right" align="center" label="操作">
+      <el-table-column width="120px" prop="selectValue" align="center" label="选择id(普通列)"/>
+      <el-table-column width="120px" prop="selectName" align="center" label="选择值(普通列)"/>
+      <el-table-column width="60px" fixed="right" align="center" label="操作">
         <template slot-scope="scope">
-          <el-button style="font-size: 12px" :type="getRowState(scope.row._hiddenRowId)==='delete'?'success':'danger'" plain size="mini" :icon="getRowState(scope.row._hiddenRowId)==='delete'?'el-icon-refresh-left':'el-icon-delete'" @click="deleteRowHandler(scope.row)">
-            {{getRowState(scope.row._hiddenRowId)==='delete'?'取消':'删除'}}
-          </el-button>
+          <el-button :title="getRowState(scope.row._hiddenRowId)==='delete'?'取消删除':'删除'" style="margin-left: -10px;font-size: 12px" :type="getRowState(scope.row._hiddenRowId)==='delete'?'success':'danger'" plain size="mini"
+                     :icon="getRowState(scope.row._hiddenRowId)==='delete'?'el-icon-refresh-left':'el-icon-delete'"
+                     @click="deleteRowHandler(scope.row)"/>
         </template>
       </el-table-column>
     </el-table>
@@ -124,58 +143,70 @@
     name: 'TableCellEdit',
     data() {
       return {
-        hiddenRowIdProp: '_hiddenRowId',
-        search: '',
-        tableData: [],//table当前数据
+        tableData: undefined,//table当前数据
         tableDataOrigin: [],//table原数据，做撤销时使用
         editingCellInfo: {//记录当前编辑中的单元格坐标信息
           rowId: undefined,
           columnId: undefined,
-          columnKey: undefined
+          columnOption: undefined
         },
-        // 已修改的单元格集合
-        changedCellInfo: {
-          // 'rowId': {
-          //   'columnId1': 'propId',
-          //   'columnId2': 'propId',
+        changedCellInfo: {// 已修改的单元格集合
+          // 'rowId': {//行标识
+          //   'columnId1': 'propId1',//列标识 ： 列的数据字段
+          //   'columnId2': 'propId2',
           // }
         },
-        // 错误值单元格集合，结构同上
-        wrongCellInfo: {},
-        tableColumnProperties: [],//table中各个列信息。配合Tab键切换单元格使用
-        // showValueCheckMsg: false,
-        columnOption: [
+        columnOption: [ //列配置
           {
             columnKey: 'name',
-            label: '名称',
-            propId: 'name',
-            propText: 'name',
+            minWidth: "100px",
+            label: '文字',
+            propId: 'text',
+            propText: 'text',
             editType: 'Input',
           }, {
-            columnKey: 'address',
-            label: '住址',
-            propId: 'address',
-            propText: 'address',
-            editType: 'Input',
-          }, {
-            columnKey: 'date',
-            label: '时间编辑',
-            propId: 'date',
-            propText: 'date',
-            editType: 'DatePicker',
+            //以下为单元格编辑关键配置：
+            columnKey: 'date',//列标识，随便写，不重复就行
+            propId: 'date',//编辑时绑定的数据字段
+            propText: 'date',//非编辑时展示的数据字段
+            editType: 'DatePicker',//编辑类型，现有固定的几种Input，InputNumber，Select，DatePicker。没有editType则此列不能进入编辑模式。若有值且不是以上值则编辑出bug
+            //以下为仅在组件中引用的配置参数或方法，可随意修改，不影响编辑功能：
+            width: "150px",//element-ui表格组件的列宽（普通的配置引用这个值而已）
+            minWidth: "150px",//element-ui表格组件的列最小宽度（普通的配置引用这个值而已）
+            label: '时间编辑',//element-ui表格组件的列标题（普通的配置引用这个值而已）
+            formatter: function (value) {
+              try {
+                let nowYear = new Date().getUTCFullYear();
+                let dataYear = new Date(value).getUTCFullYear();
+                if (nowYear - dataYear > 3) {
+                  return "三年前"
+                } else if (nowYear - dataYear > 2) {
+                  return "两年前";
+                } else if (nowYear - dataYear > 1) {
+                  return "一年前";
+                } else {
+                  return value;
+                }
+              } catch (e) {
+                return value;
+              }
+            }
           }, {
             columnKey: 'age',
-            label: '年龄',
-            propId: 'age',
-            propText: 'age',
+            minWidth: "100px",
+            label: '数字',
+            propId: 'number',
+            propText: 'number',
             editType: 'InputNumber',
           }, {
             columnKey: 'height',
-            label: '身高',
-            propId: 'height',
-            propText: 'height',
+            minWidth: "140px",
+            label: '不能编辑',
+            propId: 'textNoEdit',
+            propText: 'textNoEdit',
           }, {
             columnKey: 'selectCell',
+            minWidth: "100px",
             label: '选择',
             propId: 'selectValue',
             propText: 'selectName',
@@ -198,109 +229,175 @@
                 label: '5北京烤鸭'
               }],
           },],
+        //辅助参数，记录当前列表中最后一行的 行标识序号，新增时，新行参照这个序号继续增加
         newRowHiddenId: 1,
+        //辅助参数，控制tab键一直按住，也不会重复触发切换单元格
+        tabKeyAlreadyDown: false,
       };
+    },
+    mounted() {
     },
     created() {
       this.preventLeavingPage();
-      this.initCanEditColumns();
       this.fetchData();
     },
 
     methods: {
+      fetchData() {
+        if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
+          this.$confirm('检测到您有未提交保存的修改<br />刷新将<span style="color:#E6A23C;font-weight: bold">丢失未保存的修改</span>，是否继续？',
+            {dangerouslyUseHTMLString: true})
+            .then(() => {
+              this.doFetchData();
+            })
+            .catch(() => {
+            });
+        } else {
+          this.doFetchData();
+        }
+      },
+      doFetchData() {
+        this.resetCell();
+        {//TODO 模拟获取数据，与后台接口对接后不使用
+          if (this.tableData === undefined) {
+            this.tableData = [
+              {
+                id: 1,
+                date: '2016-05-02',
+                text: '张三',
+                number: 511,
+                textNoEdit: '不能编辑的列',
+                selectValue: 1,
+                selectName: '1黄金糕',
+              }, {
+                id: 2,
+                date: '2017-05-04',
+                text: '李四',
+                number: 11,
+                textNoEdit: '11',
+                selectValue: 2,
+                selectName: '2双皮奶',
+              }, {
+                id: 3,
+                date: '2019-01-01',
+                text: '王五',
+                number: 213,
+                textNoEdit: '一段文字',
+                selectValue: 3,
+                selectName: '3蚵仔煎',
+              }, {
+                id: 4,
+                date: '2019-05-03',
+                text: '赵六',
+                number: 151,
+                textNoEdit: '另一段文字',
+                selectValue: 4,
+                selectName: '4龙须面',
+              }];
+            this.$nextTick(() => {
+              this.tableData = JSON.parse(JSON.stringify(this.tableData));
+            })
+          } else {
+            this.tableData = JSON.parse(JSON.stringify(this.tableDataOrigin));
+          }
+          this.initTableDataAndTableDataOrigin();
+        }
+      },
+      // extraEditHandler(carId) {
+      //   let row = this.getEditingRow();
+      //   let carInfo = this.columnOption.find(e => e.columnKey === 'carId')
+      //     .selectList
+      //     .find(e => e.id === carId);
+      //   if (this.columnOption.find(e => e.columnKey === 'driverId')
+      //     .selectList
+      //     .findIndex(e => e.value === carInfo.defaultDriverId) >= 0) {
+      //     this.$set(row, 'driverId', carInfo.defaultDriverId);
+      //     this.$set(row, 'driverName', carInfo.defaultDriverName);
+      //     this.setEditingCellInfo(this.changedCellInfo, this.checkEditingValueIsChanged(['driverId']), 'driverId', 'driverId');
+      //   }
+      //   if (this.columnOption.find(e => e.columnKey === 'purposeId')
+      //     .selectList
+      //     .findIndex(e => e.value === carInfo.defaultCarPurposeId) >= 0) {
+      //     this.$set(row, 'purposeId', carInfo.defaultCarPurposeId);
+      //     this.$set(row, 'purposeName', carInfo.defaultCarPurposeName);
+      //     this.setEditingCellInfo(this.changedCellInfo, this.checkEditingValueIsChanged(['purposeId']), 'purposeId', 'purposeId');
+      //   }
+      // },
+
+      //---------------------------------------------以下为单元格编辑支持方法---------------------------------------------
       getRowState(_hiddenRowId) {
         if (!_hiddenRowId) {
           return '';
-        }
-        if (_hiddenRowId.startsWith('D')) {
+        } else if (_hiddenRowId.startsWith('D')) {
           return 'delete';
-        }
-        if (_hiddenRowId.startsWith('A')) {
+        } else if (_hiddenRowId.startsWith('A')) {
           return 'add';
         }
       },
       tableRowClassName({row, rowIndex}) {
         if (!row._hiddenRowId) {
           return '';
-        }
-        if (row._hiddenRowId.startsWith('A')) {
+        } else if (row._hiddenRowId.startsWith('A')) {
           return 'pre-add-row';
-        }
-        if (row._hiddenRowId.startsWith('D')) {
+        } else if (row._hiddenRowId.startsWith('D')) {
           return 'pre-delete-row';
         }
         return '';
       },
       tableCellClassName({row, column, rowIndex, columnIndex}) {
         let classNames = '';
-        if (this.changedCellInfo[row._hiddenRowId] && this.changedCellInfo[row._hiddenRowId][column.id]) {
+        if (this.changedCellInfo[row._hiddenRowId] && this.changedCellInfo[row._hiddenRowId][column.columnKey]) {
           classNames += ' pre-update-cell';        //被修改的角标样式
-        }
-        if (this.wrongCellInfo[row._hiddenRowId] && this.wrongCellInfo[row._hiddenRowId][column.id]) {
-          classNames += ' wrong-cell-info';        //内容错误的文字样式
         }
         return classNames;
       },
-      //数字变字符串左侧补充0，总长度为n
-      pad(num, n) {
-        let tbl = [];
-        let len = n - num.toString().length;
-        if (len <= 0) return num;
-        if (!tbl[len]) tbl[len] = (new Array(len + 1)).join('0');
-        return tbl[len] + num;
-      },
       buildNewRowHiddenId() {
-        let newRowHiddenId = 'A' + this.pad(this.newRowHiddenId, 16);
+        let newRowHiddenId = 'A' + (Array(16)
+          .join('0') + this.newRowHiddenId).slice(-16);
         this.newRowHiddenId++;
         return newRowHiddenId;
       },
-      //table原数据加自定义id列，留存副本 [实际需在获取数据后马上调用]
+      //table原数据加自定义id列，留存副本 [需在获取数据后马上调用]
       initTableDataAndTableDataOrigin() {
         let i = 1;
         for (let row of this.tableData) {
           //_hiddenRowId为定位行的辅助参数，请求的数据中不能包含此字段
-          row._hiddenRowId = this.pad(i, 16);
+          row._hiddenRowId = (Array(16)
+            .join('0') + i).slice(-16);
           i++;
         }
         this.tableDataOrigin = JSON.parse(JSON.stringify(this.tableData));
       },
-
-      //从实际渲染的组件中，获取各列信息，收集其中包含columnKey的列，为可编辑列信息集合
-      initCanEditColumns() {
-        this.tableColumnProperties = [];
-        this.$nextTick(() => {
-          for (let item of this.$refs.Table.columns) {
-            if (item.columnKey) {
-              this.tableColumnProperties.push(
-                {
-                  columnId: item.id,
-                  columnKey: item.columnKey
-                }
-              );
-            }
-          }
-        });
-      },
       //通过行列坐标构建ref的方法
       buildCellRef(_hiddenRowId, columnId) {
+        // console.log('buildCellRef',_hiddenRowId, columnId);
         return 'Cell_' + _hiddenRowId + '_' + columnId;
       },
       //单元格编辑状态 开关
-      isEditingCell(scope) {
-        return this.editingCellInfo.rowId === scope.row._hiddenRowId
-          && this.editingCellInfo.columnId === scope.column.id
-          && this.editingCellInfo.columnKey === scope.column.columnKey;
+      isEditingCell(rowId, columnId, editType) {
+        return editType
+          && this.editingCellInfo.rowId === rowId
+          && this.editingCellInfo.columnId === columnId;
       },
-      cellClickHandler(row, column, cell, event) {
-        this.startEdit(row, column);
+      cellClickHandler(row, item) {
+        // console.log('row, column', row, item);
+        this.startEdit(row, item);
       },
       //开始编辑(设置编辑中单元格信息)
-      startEdit(row, column) {
+      startEdit(row, item) {
         this.setEditKeyListener(false);
         this.setEditKeyListener(true);
-        this.editingCellInfo.rowId = row._hiddenRowId;
-        this.editingCellInfo.columnId = column.id;
-        this.editingCellInfo.columnKey = column.columnKey;
+        {//设置编辑中单元格 定位参数
+          if (row && row._hiddenRowId) {
+            this.editingCellInfo.rowId = row._hiddenRowId;
+          }
+          if (item && item.columnKey) {
+            this.editingCellInfo.columnId = item.columnKey;
+          }
+          if (item) {
+            this.editingCellInfo.columnOption = item;
+          }
+        }
         this.editingCellFocusAndSelect();
         // console.log('开始编辑', column.columnKey);
       },
@@ -310,7 +407,7 @@
         this.editingCellInfo = {
           rowId: undefined,
           columnId: undefined,
-          columnKey: undefined,
+          columnOption: undefined,
         };
         this.setEditKeyListener(false);
       },
@@ -331,87 +428,92 @@
           }
         });
       },
+      editCellFocusHandler() {
+        //input不再使用v-model绑定数值，避免实时更新导致渲染频繁问题
+        this.$nextTick(() => {
+          let cellValue = this.tableData.find(e => e._hiddenRowId === this.editingCellInfo.rowId)[this.editingCellInfo.columnOption.propId];
+          this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value = cellValue === undefined ? '' : cellValue;
+        });
+      },
       //编辑中单元格失去焦点事件
       editCellBlurHandler() {
-        this.$nextTick(() => {//消除错误值提示
-          // this.showValueCheckMsg = false;
-        });
-        let props = this.getEditingCellProps();
-        switch (props.editType) {
-          case 'InputNumber':
-            //检查值是否正确
-            let isWrongCell = this.checkEditingValueIsNaN();
-            this.setEditingCellInfo(this.wrongCellInfo, isWrongCell);
-            break;
-          case 'Select':
-            let row = this.getEditingRow();
-            let selectList = props.selectList;
-            let newText = null;
-            for (let selectItem of selectList) {
-              if (selectItem.value === row[props.propId]) {
-                newText = selectItem.label;
+        let columnOption = this.editingCellInfo.columnOption;
+        if (columnOption) {
+          let row = this.getEditingRow();
+          switch (columnOption.editType) {
+            case 'Input':
+            case 'InputNumber':
+              let changeValue = this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value;
+              this.$set(row, columnOption.propId, changeValue);
+              break;
+            case 'Select':
+            case 'SelectGroup':
+              let selectList = columnOption.selectList;
+              let newText = null;
+              for (let selectItem of selectList) {
+                if (selectItem.value === row[columnOption.propId]) {
+                  newText = selectItem.label;
+                }
               }
-            }
-            //列表没有当前格子中的值不对表格中值进行更新
-            if (props.selectList.findIndex(e => e.value === row[props.propId]) >= 0) {
-              this.$set(row, props.propId, row[props.propId]);
-              this.$set(row, props.propText, newText);
-            }
-            break;
+              if (columnOption.selectList.findIndex(e => e.value === row[columnOption.propId]) >= 0) {
+                this.$set(row, columnOption.propId, row[columnOption.propId]);
+                this.$set(row, columnOption.propText, newText);
+                if (columnOption.columnKey === 'carId') {
+                  this.carExtraEditHandler(row[columnOption.propId]);
+                }
+                if (columnOption.columnKey === 'fleetId') {
+                  this.currentUser.fleetId = row[columnOption.propId];
+                  this.currentUser.fleetName = newText;
+                }
+              }
+              break;
+          }
         }
         this.setEditingCellInfo(this.changedCellInfo, this.checkEditingValueIsChanged());
       },
       //将编辑中单元格 还原到未修改时的值
       revokeEditingValueHandler() {
-        let props = this.getEditingCellProps();
-        let propId = props.propId;
-        let propText = props.propText;
+        let columnOption = this.editingCellInfo.columnOption;
+        let propId = columnOption.propId;
+        let propText = columnOption.propText;
         for (let rowOrigin of this.tableDataOrigin) {
           if (rowOrigin._hiddenRowId === this.editingCellInfo.rowId) {
             let row = this.getEditingRow();
             this.$set(row, propId, rowOrigin[propId]);
             this.$set(row, propText, rowOrigin[propText]);
+            {//将input类型的编辑框中值也重置，因为没绑定变量，要手动重置
+              switch (columnOption.editType) {
+                case 'Input':
+                case 'InputNumber':
+                  this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value = rowOrigin[propId];
+                  break;
+              }
+            }
           }
         }
-        // this.finishEdit();
-        this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].focus();
 
+        this.finishEdit();//撤销完失去焦点
+        // this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].focus();//撤销完保持焦点
       },
-      //阻止默认事件。（如阻止点击按钮时，input失去焦点）
-      // preventNativeEvent(event) {
-      //   if (event && event.preventDefault) { //现代浏览器阻止默认事件
-      //     event.preventDefault();
-      //   } else {//IE阻止默认事件
-      //     window.event.returnValue = false;
-      //   }
-      //   return false;
-      // },
       //切换正在编辑的单元格
       switchEditColumnHandler(direction) {
         // console.log('Tab切换单元格', this.editingCellInfo.rowId, this.editingCellInfo.columnId, this.editingCellInfo.columnKey);
-        if (this.editingCellInfo.rowId && this.editingCellInfo.columnId && this.editingCellInfo.columnKey) {
-          for (let i = 0; i < this.tableColumnProperties.length; i++) {
-            if (this.tableColumnProperties[i].columnId === this.editingCellInfo.columnId) {
+        let columnOptionOnlyCanEdit = this.columnOption.filter(e => e.editType);
+        if (this.editingCellInfo.rowId && this.editingCellInfo.columnId) {
+          for (let i = 0; i < columnOptionOnlyCanEdit.length; i++) {
+            if (columnOptionOnlyCanEdit[i].columnKey === this.editingCellInfo.columnId) {
               let next = i;
               if (direction > 0) {
                 next++;
               } else if (direction < 0) {
                 next--;
               }
-              if (direction > 0 && next < this.tableColumnProperties.length || direction < 0 && next >= 0) {
-                if (this.tableColumnProperties[next]) {
-                  this.editCellBlurHandler();
-                  this.editingCellInfo.columnId = this.tableColumnProperties[next].columnId;
-                  this.editingCellInfo.columnKey = this.tableColumnProperties[next].columnKey;
 
-                  this.$nextTick(() => {
-                    let cellEditorELArray = this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)];
-                    if (cellEditorELArray && cellEditorELArray.length > 0) {
-                      //可以检测到input框，不做任何操作
-                    } else {
-                      this.switchEditColumnHandler(direction);
-                    }
-                  });
+              if (direction > 0 && next < columnOptionOnlyCanEdit.length || direction < 0 && next >= 0) {
+                //跳下一个单元格
+                if (columnOptionOnlyCanEdit[next]) {
+                  this.editCellBlurHandler();
+                  this.startEdit(undefined, columnOptionOnlyCanEdit[next]);
                 }
               } else {
                 //跳行
@@ -426,20 +528,16 @@
                     this.addNewRowHandler();//超过最后一行时增加新行
                   }
                   let nextRow = this.tableData[++rowIndex];
-                  this.editingCellInfo.rowId = nextRow._hiddenRowId;
-                  this.editingCellInfo.columnId = this.tableColumnProperties[0].columnId;
-                  this.editingCellInfo.columnKey = this.tableColumnProperties[0].columnKey;
+                  this.startEdit(nextRow, columnOptionOnlyCanEdit[0]);
                 } else if (direction < 0) {
                   if (rowIndex > 0) {
                     let preRow = this.tableData[--rowIndex];
-                    this.editingCellInfo.rowId = preRow._hiddenRowId;
-                    this.editingCellInfo.columnId = this.tableColumnProperties.slice(-1)[0].columnId;
-                    this.editingCellInfo.columnKey = this.tableColumnProperties.slice(-1)[0].columnKey;
+                    this.startEdit(preRow, columnOptionOnlyCanEdit.slice(-1)[0]);
                   } else {
                   }
                 }
               }
-              this.editingCellFocusAndSelect();
+              // this.editingCellFocusAndSelect();
               break;
             }
           }
@@ -449,26 +547,39 @@
       setEditKeyListener(isAdd) {
         if (isAdd) {
           window.addEventListener('keydown', this.editCellKeyDownHandler, true);
+          window.addEventListener('keyup', this.editCellKeyUpHandler, true);
         } else {
           try {
             window.removeEventListener('keydown', this.editCellKeyDownHandler, true);
+            window.removeEventListener('keyup', this.editCellKeyUpHandler, true);
           } catch (e) {
           }
         }
       },
       //键盘事件
+      editCellKeyUpHandler(event) {
+        if ((event.key === 'Tab' || event.keyCode === 9)) {
+          this.tabKeyAlreadyDown = false;
+        }
+      },
       editCellKeyDownHandler(event) {
         // console.log('按键值', event.key, event.keyCode);
         let needPreventDefault = false;
         //Tab切换单元格
         if ((event.key === 'Tab' || event.keyCode === 9) && !event.shiftKey) {
           needPreventDefault = true;
-          this.switchEditColumnHandler(1);
+          if (!this.tabKeyAlreadyDown) {
+            this.switchEditColumnHandler(1);
+            this.tabKeyAlreadyDown = true;
+          }
         }
         //Shift+Tab切换单元格
         if ((event.key === 'Tab' || event.keyCode === 9) && event.shiftKey) {
           needPreventDefault = true;
-          this.switchEditColumnHandler(-1);
+          if (!this.tabKeyAlreadyDown) {
+            this.switchEditColumnHandler(-1);
+            this.tabKeyAlreadyDown = true;
+          }
         }
         //Esc完成编辑
         if ((event.key === 'Escape' || event.keyCode === 27)) {
@@ -491,44 +602,39 @@
           }
         }
       },
-      //检查编辑中单元格 数据是否为数字。 不是数字 返回true
-      checkEditingValueIsNaN() {
-        let row = this.getEditingRow();
-        let propId = this.getEditingCellProps().propId;
-        let newValue = row[propId];
-        if (newValue && newValue !== '') {
-          let result = isNaN(newValue);
-          // this.showValueCheckMsg = result;
-          return result;
-        }
-      },
-      //检查编辑中单元格 新值与原值是否相同
-      checkEditingValueIsChanged() {
-        let columnOption = this.getEditingCellProps();
-        let dataProps = [columnOption.propId, columnOption.propText];
-        let row = this.getEditingRow();
-        if (!row) {
-          return true;
-        }
-        let rowOrigin = this.getEditingRowOrigin();
-        if (!rowOrigin) {
-          return true;
-        }
-        for (let dataProp of dataProps) {
-          if (String(rowOrigin[dataProp]) !== String(row[dataProp])) {
+      //检查编辑中单元格 新值与原值是否相同.customDataProps可以传入要检测的列标记，可检测自定义列
+      checkEditingValueIsChanged(customDataProps) {
+        if (customDataProps || this.editingCellInfo.columnOption) {
+          let dataProps;
+          if (customDataProps) {
+            dataProps = customDataProps;
+          } else {
+            let columnOption = this.editingCellInfo.columnOption;
+            // console.log('this.editingCellInfo', this.editingCellInfo);
+            dataProps = [columnOption.propId, columnOption.propText];
+          }
+          let row = this.getEditingRow();
+          if (!row) {
             return true;
+          }
+          let rowOrigin = this.getEditingRowOrigin();
+          if (!rowOrigin) {
+            return true;
+          }
+          for (let dataProp of dataProps) {
+            if (rowOrigin[dataProp] === null && row[dataProp] === null ||
+              rowOrigin[dataProp] === '' && row[dataProp] === '' ||
+              rowOrigin[dataProp] === null && row[dataProp] === '' ||
+              rowOrigin[dataProp] === '' && row[dataProp] === null
+            ) {
+              return false;
+            }
+            if (String(rowOrigin[dataProp]) !== String(row[dataProp])) {
+              return true;
+            }
           }
         }
         return false;
-      },
-      //获取编辑中单元格 设置参数
-      getEditingCellProps() {
-        for (let item of this.columnOption) {
-          if (item.columnKey === this.editingCellInfo.columnKey) {
-            return item;
-          }
-        }
-        return {};
       },
       //获取编辑中行 现数据
       getEditingRow() {
@@ -548,21 +654,23 @@
         }
         return {};
       },
-      //操作记录 被修改、值有误 等单元格集合
-      setEditingCellInfo(cellArray, isAdd) {
-        let rowId = this.editingCellInfo.rowId;
-        let columnId = this.editingCellInfo.columnId;
-        let columnKey = this.editingCellInfo.columnKey;
-        let propId = this.getEditingCellProps().propId;
-        if (!cellArray[rowId]) {
-          cellArray[rowId] = {};
-        }
-        if (isAdd) {
-          cellArray[rowId][columnId] = propId;
-        } else {
-          delete cellArray[rowId][columnId];
-          if (Object.keys(cellArray[rowId]).length === 0) {
-            delete cellArray[rowId];
+      //操作记录 被修改、值有误 等单元格集合。customColumnId, customDataPropId可以传入要检测的列标记，可添加自定义列
+      setEditingCellInfo(cellArray, isAdd, customColumnId, customDataPropId) {
+        if (this.editingCellInfo.columnOption) {
+          let rowId = this.editingCellInfo.rowId;
+          let columnId = customColumnId || this.editingCellInfo.columnId;
+          // console.log('s1etEditingCellInfo!!', rowId, columnId);
+          let propId = customDataPropId || this.editingCellInfo.columnOption.propId;//propId为要修改的数据。因为可能出现两列绑定同一个数据，列用columnKey区分，数据字段用propId记录
+          if (!cellArray[rowId]) {
+            cellArray[rowId] = {};
+          }
+          if (isAdd) {
+            cellArray[rowId][columnId] = propId;
+          } else {
+            delete cellArray[rowId][columnId];
+            if (Object.keys(cellArray[rowId]).length === 0) {
+              delete cellArray[rowId];
+            }
           }
         }
       },
@@ -574,6 +682,7 @@
         );
       },
       deleteRowHandler(row) {
+        console.log('row._hiddenRowId', row._hiddenRowId)
         if (row._hiddenRowId.startsWith('A')) {
           for (let rowIndex = 0; rowIndex < this.tableData.length; rowIndex++) {
             if (this.tableData[rowIndex]._hiddenRowId === row._hiddenRowId) {
@@ -585,12 +694,14 @@
             this.changedCellInfo[row._hiddenRowId.substring(1)] = JSON.parse(JSON.stringify(this.changedCellInfo[row._hiddenRowId]));
             delete this.changedCellInfo[row._hiddenRowId];
           }
+          // this.$set(row,"_hiddenRowId",row._hiddenRowId.substring(1));
           row._hiddenRowId = row._hiddenRowId.substring(1);
         } else {
           if (this.changedCellInfo[row._hiddenRowId]) {
             this.changedCellInfo['D' + row._hiddenRowId] = JSON.parse(JSON.stringify(this.changedCellInfo[row._hiddenRowId]));
             delete this.changedCellInfo[row._hiddenRowId];
           }
+          // this.$set(row, '_hiddenRowId', 'D' + row._hiddenRowId);
           row._hiddenRowId = 'D' + row._hiddenRowId;
         }
       },
@@ -633,9 +744,7 @@
             }
           }
         });
-
         console.log('提交了信息', submitData);
-
         this.$notify({
           title: '查看控制台',
           type: 'success'
@@ -662,6 +771,7 @@
               row.id = (++this.lastTableId);
             }
           });
+          this.initTableDataAndTableDataOrigin();
         }
         this.resetCell();
         this.fetchData();
@@ -670,71 +780,14 @@
       resetCell() {
         this.finishEdit();
         this.changedCellInfo = {};
-        this.wrongCellInfo = {};
       },
-      fetchData() {
-        if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
-          this.$confirm('检测到您有未提交保存的修改<br />刷新将<span style="color:#E6A23C;font-weight: bold">丢失未保存的修改</span>，是否继续？',
-            {dangerouslyUseHTMLString: true})
-            .then(() => {
-              this.doFetchData();
-            })
-            .catch(() => {
-            });
-        } else {
-          this.doFetchData();
-        }
-      },
-      doFetchData() {
-        if (this.tableData.length === 0) {//TODO 模拟获取数据，与后台交接后不使用
-          this.tableData = [{
-            id: 1,
-            date: '2016-05-02',
-            name: '王',
-            address: '地址',
-            age: 11,
-            height: 11,
-            selectValue: 1,
-            selectName: '1黄金糕',
-          }, {
-            id: 2,
-            date: '2016-05-04',
-            name: '王小',
-            address: '住的地方',
-            age: 11,
-            height: 11,
-            selectValue: 2,
-            selectName: '2双皮奶',
-          }, {
-            id: 3,
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '地球村',
-            age: 11,
-            height: 11,
-            selectValue: 3,
-            selectName: '3蚵仔煎',
-          }, {
-            id: 4,
-            date: '2016-05-03',
-            name: '王虎',
-            address: '啊啊士大夫撒打发斯蒂芬',
-            age: 11,
-            height: 11,
-            selectValue: 4,
-            selectName: '4龙须面',
-          }];
-        }
-        this.initTableDataAndTableDataOrigin();
-      },
-      //页面跳转提示表单未保存
       preventLeavingPage() {
         window.onbeforeunload = () => {
           if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
-            return "退出将不保存您填写的数据，确定退出吗？";
+            return '退出将不保存您填写的数据，确定退出吗？';
           }
         };
-      }
+      },
     },
     //使用router时，路由跳转提示表单编辑未保存
     beforeRouteLeave(to, from, next) {
@@ -755,13 +808,13 @@
     destroyed() {
       this.setEditKeyListener(false);
     },
-
   };
 </script>
 
 <style scoped>
-  *, div, span, td {
+  *, div, span, td, input {
     font-size: 14px;
+    font-family: 'Arial', "Microsoft YaHei", serif;
   }
 
   /*去除表格的行中，上下padding，统一行高*/
@@ -771,7 +824,7 @@
     height: 30px;
   }
 
-  /*调整模板中div与td一样大*/
+  /*调整单元格模板中div与单元格一样大*/
   .el-table /deep/ .cell {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -783,60 +836,27 @@
     padding: 0 0 0 10px;
   }
 
-
-  /*.el-table /deep/ td div {*/
-  /*  margin: 5px;*/
-  /*}*/
-
-  /*去除input中的padding*/
+  /*去除element-ui编辑框的padding*/
   /deep/ .el-input__inner {
     padding: 0;
     font-size: 14px;
     box-sizing: border-box;
     height: 30px;
+    line-height: 30px;
+  }
+
+  /*去除element-ui编辑框的各种小图标或按钮*/
+  /deep/ .el-input__suffix {
+    display: none;
+  }
+
+  /deep/ .el-input__prefix {
+    display: none;
   }
 
   /*缩小button中的padding*/
   .el-button--mini, .el-button--mini.is-round {
     padding: 5px 5px;
-  }
-
-  /*inputNumber样式*/
-  .el-input-number.is-without-controls /deep/ .el-input__inner {
-    padding: 0
-  }
-
-  /deep/ .el-input__inner {
-    height: 30px;
-  }
-
-  .el-input-number /deep/ .el-input__inner {
-    text-align: left;
-  }
-
-  .el-input-number {
-    width: 100%;
-    line-height: 30px;
-  }
-
-  /*dataPicker样式*/
-  .el-date-editor.el-input, .el-date-editor.el-input__inner {
-    width: 100%;
-  }
-
-  /*select样式*/
-  /deep/ .el-input__suffix {
-    display: none;
-  }
-
-  /deep/ .wrong-cell-info {
-    font-weight: bold;
-    color: #F56C6C;
-  }
-
-  /*新行*/
-  /deep/ .pre-add-row {
-    /*stripe会覆盖这个颜色，不再使用stripe*/
   }
 
   /deep/ .pre-add-row /deep/ td {
@@ -847,7 +867,7 @@
     background-repeat: no-repeat;
   }
 
-  .el-table /deep/ .pre-delete-row /deep/ td {
+  /deep/ .pre-delete-row /deep/ td {
     /*background-color: red !important;*/
     background-image: url('./static/img/grid/pre_delete_corner.png') !important;
     background-position: 0 0;
@@ -855,40 +875,13 @@
     background-repeat: no-repeat;
   }
 
-  .el-table /deep/ .pre-update-cell {
+  /deep/ .pre-update-cell {
     /*background-color: red !important;*/
     background-image: url('./static/img/grid/pre_update_corner.png');
     background-position: 0 0;
     background-size: 8px;
     background-repeat: no-repeat;
   }
-
-
-  /*表格头部*/
-  .el-table /deep/ th {
-    border-bottom-color: #DFDFDF;
-    background-color: #F6F6F6;
-  }
-
-  .el-table /deep/ th:hover {
-    background-color: #FFFFFF;
-  }
-
-  /*!*表格数据行边框*!*/
-  /*.el-table /deep/ td {*/
-  /*  border-color: #FFF;*/
-  /*}*/
-
-  /*!*表格数据行偶数行-白背景-变色底边*!*/
-  /*.el-table /deep/ tr:nth-child(2n) /deep/ td {*/
-  /*  border-right-color: #EFEFFE;*/
-  /*  border-bottom-color: #EFEFFA;*/
-  /*}*/
-
-  /*!*表格数据行偶数行-变色背景-白色底边*!*/
-  /*.el-table /deep/ tr:nth-child(2n+1) /deep/ td {*/
-  /*  background-color: #eaf2ff;*/
-  /*}*/
 
   /*input输入框为number类型时不显示箭头*/
   /deep/ input::-webkit-outer-spin-button,
@@ -899,4 +892,6 @@
   /deep/ input[type="number"] {
     -moz-appearance: textfield;
   }
+
+
 </style>
