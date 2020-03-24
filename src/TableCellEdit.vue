@@ -2,7 +2,9 @@
   <div>
     <el-form inline style="height:20px;">
       <el-form-item style="margin-bottom: 0">
-        <el-button class="custom-button-in-toolbar " type="primary" plain size="mini" icon="el-icon-refresh" @click="fetchData">刷新</el-button>
+        <el-button class="custom-button-in-toolbar " type="primary" plain size="mini" icon="el-icon-refresh"
+                   @click="fetchData">刷新
+        </el-button>
       </el-form-item>
       <el-form-item style="margin-bottom: 0">
         <el-button type="primary" plain size="mini" icon="el-icon-circle-plus" @click="addNewRowHandler">新增</el-button>
@@ -60,13 +62,13 @@
       :cell-class-name="tableCellClassName"
     >
       <el-table-column fixed="left" type="index" width="50px" label="序号" align="center"/>
-      <el-table-column v-for="item in columnOption" :min-width="item.minWidth" :width="item.width" :column-key="item.columnKey" :label="item.label" :key="item.prop" :prop="item.propText">
-        <!--        <template slot="header" slot-scope="scope">-->
-        <!--          <div style="float: left;">{{scope.column.label}}</div>-->
-        <!--        </template>-->
+      <el-table-column v-for="item in columnOption" :min-width="item.minWidth" :width="item.width"
+                       :column-key="item.columnKey"
+                       :label="item.label" :key="item.prop" :prop="item.propText">
         <template slot-scope="scope">
-          <div @click="cellClickHandler(scope.row,item)" style="min-height: 30px" :style="{color:item.color}" v-show="!isEditingCell(scope.row._hiddenRowId,item.columnKey,item.editType)">
-            <span>{{item.formatter?item.formatter(scope.row[item.propText]):scope.row[item.propText]}}</span>
+          <div @click="cellClickHandler(scope.row,item)" style="min-height: 30px" :style="{color:item.color}"
+               v-show="!isEditingCell(scope.row._hiddenRowId,item.columnKey,item.editType)">
+            <span>{{scope.row[item.propText]}}</span>
           </div>
           <div style="display: table" v-if="isEditingCell(scope.row._hiddenRowId,item.columnKey,item.editType)">
             <div style="display: table-cell;width: 100%">
@@ -90,7 +92,8 @@
                               @blur="editCellBlurHandler"
                               :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"
                               v-model="scope.row[item.propId]"
-                              :clearable="false" size="mini" prefix-icon=" " placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd"/>
+                              :clearable="false" size="mini" prefix-icon=" " placeholder="选择日期" format="yyyy-MM-dd"
+                              value-format="yyyy-MM-dd"/>
               <el-select v-if="item.editType==='Select'"
                          width="100%"
                          filterable
@@ -100,25 +103,14 @@
                          v-model="scope.row[item.propId]"
                          :automatic-dropdown="true"
                          placeholder="请选择">
-                <el-option v-for="selectItem in item.selectList" :key="selectItem.value" :label="selectItem.label" :value="selectItem.value"/>
+                <el-option v-for="selectItem in item.selectList" :key="selectItem.value" :label="selectItem.label"
+                           :value="selectItem.value"/>
               </el-select>
-              <!--              <el-select v-if="item.editType==='SelectGroup'"-->
-              <!--                         width="100%"-->
-              <!--                         filterable-->
-              <!--                         @blur="editCellBlurHandler"-->
-              <!--                         @change="editCellBlurHandler"-->
-              <!--                         :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"-->
-              <!--                         v-model="scope.row[item.propId]"-->
-              <!--                         :automatic-dropdown="true"-->
-              <!--                         placeholder="请选择">-->
-              <!--                <el-option-group v-for="group in item.selectGroupList" :label="group.label" :key="group.value">-->
-              <!--                  <el-option style="padding-left:40px" v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value"/>-->
-              <!--                </el-option-group>-->
-              <!--              </el-select>-->
             </div>
             <div style="margin: 0;" :style="{width:getRowState(scope.row._hiddenRowId)==='add'?0:26+'px'}">
               <el-popconfirm placement="right" @onConfirm="revokeEditingValueHandler" title="确定撤销更改？">
-                <el-button v-if="getRowState(scope.row._hiddenRowId)!=='add'" slot="reference" style="margin: 0;" title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
+                <el-button v-if="getRowState(scope.row._hiddenRowId)!=='add'" slot="reference" style="margin: 0;"
+                           title="撤销更改(Shift+Backspace)" type="danger" plain size="mini" icon="el-icon-refresh-left"/>
               </el-popconfirm>
             </div>
           </div>
@@ -128,7 +120,9 @@
       <el-table-column width="120px" prop="selectName" align="center" label="选择值(普通列)"/>
       <el-table-column width="60px" fixed="right" align="center" label="操作">
         <template slot-scope="scope">
-          <el-button :title="getRowState(scope.row._hiddenRowId)==='delete'?'取消删除':'删除'" style="margin-left: -10px;font-size: 12px" :type="getRowState(scope.row._hiddenRowId)==='delete'?'success':'danger'" plain size="mini"
+          <el-button :title="getRowState(scope.row._hiddenRowId)==='delete'?'取消删除':'删除'"
+                     style="margin-left: -10px;font-size: 12px"
+                     :type="getRowState(scope.row._hiddenRowId)==='delete'?'success':'danger'" plain size="mini"
                      :icon="getRowState(scope.row._hiddenRowId)==='delete'?'el-icon-refresh-left':'el-icon-delete'"
                      @click="deleteRowHandler(scope.row)"/>
         </template>
@@ -156,62 +150,53 @@
           //   'columnId2': 'propId2',
           // }
         },
+        dataPrimaryKey: "id",//数据的主键字段，即区分每行数据的标识字段
         columnOption: [ //列配置
           {
-            columnKey: 'name',
+            columnKey: "column1",
             minWidth: "100px",
             label: '文字',
             propId: 'text',
             propText: 'text',
             editType: 'Input',
           }, {
-            //以下为单元格编辑关键配置：
-            columnKey: 'date',//列标识，随便写，不重复就行
-            propId: 'date',//编辑时绑定的数据字段
-            propText: 'date',//非编辑时展示的数据字段
-            editType: 'DatePicker',//编辑类型，现有固定的几种Input，InputNumber，Select，DatePicker。没有editType则此列不能进入编辑模式。若有值且不是以上值则编辑出bug
-            //以下为仅在组件中引用的配置参数或方法，可随意修改，不影响编辑功能：
-            width: "150px",//element-ui表格组件的列宽（普通的配置引用这个值而已）
-            minWidth: "150px",//element-ui表格组件的列最小宽度（普通的配置引用这个值而已）
-            label: '时间编辑',//element-ui表格组件的列标题（普通的配置引用这个值而已）
-            formatter: function (value) {
-              try {
-                let nowYear = new Date().getUTCFullYear();
-                let dataYear = new Date(value).getUTCFullYear();
-                if (nowYear - dataYear > 3) {
-                  return "三年前"
-                } else if (nowYear - dataYear > 2) {
-                  return "两年前";
-                } else if (nowYear - dataYear > 1) {
-                  return "一年前";
-                } else {
-                  return value;
-                }
-              } catch (e) {
-                return value;
-              }
-            }
+            columnKey: "column12",
+            minWidth: "100px",
+            label: '文字1',
+            propId: 'text1',
+            propText: 'text1',
+            editType: 'Input',
           }, {
-            columnKey: 'age',
+            //以下为单元格编辑关键配置：
+            columnKey: "column3",//列标识，每列互相不重复即可。
+            propId: 'date',   //编辑时绑定的数据字段（这个字段需要为数据中的字段名，并且也是本列编辑后回传的字段名）
+            propText: 'date', //非编辑时展示的数据字段（这个字段需要为数据中的字段名）
+            editType: 'DatePicker',//编辑类型，现有固定的几种Input，InputNumber，Select，DatePicker。没有editType则此列不能进入编辑模式。若有值且不是以上值则编辑出bug
+            //以下为element-ui的table原有的列配置字段引用的值。（只是在el-table-column中引用了值）
+            width: "150px",
+            minWidth: "150px",
+            label: '时间编辑',
+          }, {
+            columnKey: "column4",
             minWidth: "100px",
             label: '数字',
             propId: 'number',
             propText: 'number',
             editType: 'InputNumber',
           }, {
-            columnKey: 'height',
+            columnKey: "column5",
             minWidth: "140px",
             label: '不能编辑',
             propId: 'textNoEdit',
             propText: 'textNoEdit',
           }, {
-            columnKey: 'selectCell',
+            columnKey: "column6",
             minWidth: "100px",
             label: '选择',
             propId: 'selectValue',
             propText: 'selectName',
             editType: 'Select',
-            selectList: [
+            selectList: [//选择列表，需要在此提供列表数据
               {
                 value: 1,
                 label: '1黄金糕'
@@ -262,33 +247,37 @@
           if (this.tableData === undefined) {
             this.tableData = [
               {
-                id: 1,
+                id: 10001,
                 date: '2016-05-02',
                 text: '张三',
+                text1: 'ff',
                 number: 511,
                 textNoEdit: '不能编辑的列',
                 selectValue: 1,
                 selectName: '1黄金糕',
               }, {
-                id: 2,
+                id: 10002,
                 date: '2017-05-04',
                 text: '李四',
+                text1: 'vv',
                 number: 11,
                 textNoEdit: '11',
                 selectValue: 2,
                 selectName: '2双皮奶',
               }, {
-                id: 3,
+                id: 10003,
                 date: '2019-01-01',
                 text: '王五',
+                text1: 'cc',
                 number: 213,
                 textNoEdit: '一段文字',
                 selectValue: 3,
                 selectName: '3蚵仔煎',
               }, {
-                id: 4,
+                id: 10004,
                 date: '2019-05-03',
                 text: '赵六',
+                text1: 'aa',
                 number: 151,
                 textNoEdit: '另一段文字',
                 selectValue: 4,
@@ -303,27 +292,6 @@
           this.initTableDataAndTableDataOrigin();
         }
       },
-      // extraEditHandler(carId) {
-      //   let row = this.getEditingRow();
-      //   let carInfo = this.columnOption.find(e => e.columnKey === 'carId')
-      //     .selectList
-      //     .find(e => e.id === carId);
-      //   if (this.columnOption.find(e => e.columnKey === 'driverId')
-      //     .selectList
-      //     .findIndex(e => e.value === carInfo.defaultDriverId) >= 0) {
-      //     this.$set(row, 'driverId', carInfo.defaultDriverId);
-      //     this.$set(row, 'driverName', carInfo.defaultDriverName);
-      //     this.setEditingCellInfo(this.changedCellInfo, this.checkEditingValueIsChanged(['driverId']), 'driverId', 'driverId');
-      //   }
-      //   if (this.columnOption.find(e => e.columnKey === 'purposeId')
-      //     .selectList
-      //     .findIndex(e => e.value === carInfo.defaultCarPurposeId) >= 0) {
-      //     this.$set(row, 'purposeId', carInfo.defaultCarPurposeId);
-      //     this.$set(row, 'purposeName', carInfo.defaultCarPurposeName);
-      //     this.setEditingCellInfo(this.changedCellInfo, this.checkEditingValueIsChanged(['purposeId']), 'purposeId', 'purposeId');
-      //   }
-      // },
-
       //---------------------------------------------以下为单元格编辑支持方法---------------------------------------------
       getRowState(_hiddenRowId) {
         if (!_hiddenRowId) {
@@ -368,7 +336,7 @@
         }
         this.tableDataOrigin = JSON.parse(JSON.stringify(this.tableData));
       },
-      //通过行列坐标构建ref的方法
+      //通过行列坐标构建ref值的方法
       buildCellRef(_hiddenRowId, columnId) {
         // console.log('buildCellRef',_hiddenRowId, columnId);
         return 'Cell_' + _hiddenRowId + '_' + columnId;
@@ -416,7 +384,7 @@
         let _hiddenRowId = this.editingCellInfo.rowId;
         let columnId = this.editingCellInfo.columnId;
         this.$nextTick(() => {
-          //以单元格row._hiddenRowId，column.id，发现单元格。
+          //以row._hiddenRowId，column.columnKey，发现单元格。
           let cellEditorELArray = this.$refs[this.buildCellRef(_hiddenRowId, columnId)];
           if (cellEditorELArray && cellEditorELArray.length > 0) {
             if (cellEditorELArray[0].focus) {
@@ -428,8 +396,9 @@
           }
         });
       },
+      //单元格获取焦点事件（这个方法是专门为input控件编辑时使用的）
       editCellFocusHandler() {
-        //input不再使用v-model绑定数值，避免实时更新导致渲染频繁问题
+        //input不再使用v-model绑定数值，避免实时更新导致渲染频繁问题（在表格内容多的时候尤为明显，输入每一个字都会卡）
         this.$nextTick(() => {
           let cellValue = this.tableData.find(e => e._hiddenRowId === this.editingCellInfo.rowId)[this.editingCellInfo.columnOption.propId];
           this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value = cellValue === undefined ? '' : cellValue;
@@ -437,6 +406,10 @@
       },
       //编辑中单元格失去焦点事件
       editCellBlurHandler() {
+        this.setEditingValueToTableData();
+        this.setEditingCellInfoToChangedCellInfo(this.checkEditingValueIsChanged());
+      },
+      setEditingValueToTableData() {
         let columnOption = this.editingCellInfo.columnOption;
         if (columnOption) {
           let row = this.getEditingRow();
@@ -444,7 +417,7 @@
             case 'Input':
             case 'InputNumber':
               let changeValue = this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value;
-              this.$set(row, columnOption.propId, changeValue);
+              this.$set(row, columnOption.propId, columnOption.editType === 'InputNumber' ? Number(changeValue) : changeValue);
               break;
             case 'Select':
             case 'SelectGroup':
@@ -458,18 +431,29 @@
               if (columnOption.selectList.findIndex(e => e.value === row[columnOption.propId]) >= 0) {
                 this.$set(row, columnOption.propId, row[columnOption.propId]);
                 this.$set(row, columnOption.propText, newText);
-                if (columnOption.columnKey === 'carId') {
-                  this.carExtraEditHandler(row[columnOption.propId]);
-                }
-                if (columnOption.columnKey === 'fleetId') {
-                  this.currentUser.fleetId = row[columnOption.propId];
-                  this.currentUser.fleetName = newText;
-                }
               }
               break;
           }
         }
-        this.setEditingCellInfo(this.changedCellInfo, this.checkEditingValueIsChanged());
+      },
+      //记录 被修改、值有误 等单元格信息到this.changedCellInfo中。
+      setEditingCellInfoToChangedCellInfo(isAdd) {
+        if (this.editingCellInfo.columnOption) {
+          let rowId = this.editingCellInfo.rowId;
+          let columnId = this.editingCellInfo.columnId;
+          let propId = this.editingCellInfo.columnOption.propId;//propId为要修改的数据。因为可能出现两列绑定同一个数据，列用columnKey区分，数据字段用propId记录
+          if (!this.changedCellInfo[rowId]) {
+            this.changedCellInfo[rowId] = {};
+          }
+          if (isAdd) {
+            this.changedCellInfo[rowId][columnId] = propId;
+          } else {
+            delete this.changedCellInfo[rowId][columnId];
+            if (Object.keys(this.changedCellInfo[rowId]).length === 0) {
+              delete this.changedCellInfo[rowId];
+            }
+          }
+        }
       },
       //将编辑中单元格 还原到未修改时的值
       revokeEditingValueHandler() {
@@ -481,7 +465,7 @@
             let row = this.getEditingRow();
             this.$set(row, propId, rowOrigin[propId]);
             this.$set(row, propText, rowOrigin[propText]);
-            {//将input类型的编辑框中值也重置，因为没绑定变量，要手动重置
+            {//将input类型的编辑框中值也重置，因为没使用v-model绑定变量，要手动重置
               switch (columnOption.editType) {
                 case 'Input':
                 case 'InputNumber':
@@ -495,7 +479,7 @@
         this.finishEdit();//撤销完失去焦点
         // this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].focus();//撤销完保持焦点
       },
-      //切换正在编辑的单元格
+      //切换正在编辑的单元格到下一个（direction>0）或上一个（direction<0）。
       switchEditColumnHandler(direction) {
         // console.log('Tab切换单元格', this.editingCellInfo.rowId, this.editingCellInfo.columnId, this.editingCellInfo.columnKey);
         let columnOptionOnlyCanEdit = this.columnOption.filter(e => e.editType);
@@ -513,6 +497,7 @@
                 //跳下一个单元格
                 if (columnOptionOnlyCanEdit[next]) {
                   this.editCellBlurHandler();
+                  this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].blur();
                   this.startEdit(undefined, columnOptionOnlyCanEdit[next]);
                 }
               } else {
@@ -543,7 +528,7 @@
           }
         }
       },
-      //添加/删除键盘监听事件
+      // 添加/删除键盘监听事件（目的是为了仅在表格进入编辑状态时，才进行按键事件监听）
       setEditKeyListener(isAdd) {
         if (isAdd) {
           window.addEventListener('keydown', this.editCellKeyDownHandler, true);
@@ -558,10 +543,11 @@
       },
       //键盘事件
       editCellKeyUpHandler(event) {
-        if ((event.key === 'Tab' || event.keyCode === 9)) {
+        if (event.key === 'Tab' || event.keyCode === 9) {
           this.tabKeyAlreadyDown = false;
         }
       },
+      //键盘事件。表格编辑快捷键操作
       editCellKeyDownHandler(event) {
         // console.log('按键值', event.key, event.keyCode);
         let needPreventDefault = false;
@@ -602,7 +588,7 @@
           }
         }
       },
-      //检查编辑中单元格 新值与原值是否相同.customDataProps可以传入要检测的列标记，可检测自定义列
+      //检查编辑中单元格 新值与原值是否相同。customDataProps可以传入要检测的列标记，可检测自定义列（此示例未使用此参数）
       checkEditingValueIsChanged(customDataProps) {
         if (customDataProps || this.editingCellInfo.columnOption) {
           let dataProps;
@@ -610,7 +596,6 @@
             dataProps = customDataProps;
           } else {
             let columnOption = this.editingCellInfo.columnOption;
-            // console.log('this.editingCellInfo', this.editingCellInfo);
             dataProps = [columnOption.propId, columnOption.propText];
           }
           let row = this.getEditingRow();
@@ -654,26 +639,7 @@
         }
         return {};
       },
-      //操作记录 被修改、值有误 等单元格集合。customColumnId, customDataPropId可以传入要检测的列标记，可添加自定义列
-      setEditingCellInfo(cellArray, isAdd, customColumnId, customDataPropId) {
-        if (this.editingCellInfo.columnOption) {
-          let rowId = this.editingCellInfo.rowId;
-          let columnId = customColumnId || this.editingCellInfo.columnId;
-          // console.log('s1etEditingCellInfo!!', rowId, columnId);
-          let propId = customDataPropId || this.editingCellInfo.columnOption.propId;//propId为要修改的数据。因为可能出现两列绑定同一个数据，列用columnKey区分，数据字段用propId记录
-          if (!cellArray[rowId]) {
-            cellArray[rowId] = {};
-          }
-          if (isAdd) {
-            cellArray[rowId][columnId] = propId;
-          } else {
-            delete cellArray[rowId][columnId];
-            if (Object.keys(cellArray[rowId]).length === 0) {
-              delete cellArray[rowId];
-            }
-          }
-        }
-      },
+
       addNewRowHandler() {
         this.tableData.push(
           {
@@ -682,7 +648,6 @@
         );
       },
       deleteRowHandler(row) {
-        console.log('row._hiddenRowId', row._hiddenRowId)
         if (row._hiddenRowId.startsWith('A')) {
           for (let rowIndex = 0; rowIndex < this.tableData.length; rowIndex++) {
             if (this.tableData[rowIndex]._hiddenRowId === row._hiddenRowId) {
@@ -730,7 +695,7 @@
                 for (let rowId in this.changedCellInfo) {
                   if (item._hiddenRowId === rowId) {
                     let itemTmp = {};
-                    this.changedCellInfo[rowId]['id'] = 'id';//更新的行 附加id字段
+                    this.changedCellInfo[rowId]['_dataPrimaryKey'] = this.dataPrimaryKey;
                     for (let columnId in this.changedCellInfo[rowId]) {
                       if (this.changedCellInfo[rowId].hasOwnProperty(columnId)) {
                         let propId = this.changedCellInfo[rowId][columnId];
