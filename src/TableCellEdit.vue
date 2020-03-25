@@ -3,7 +3,7 @@
     <el-form inline style="height:20px;">
       <el-form-item style="margin-bottom: 0">
         <el-button class="custom-button-in-toolbar " type="primary" plain size="mini" icon="el-icon-refresh"
-                   @click="fetchData">刷新
+                   @click="refreshData">刷新
         </el-button>
       </el-form-item>
       <el-form-item style="margin-bottom: 0">
@@ -63,8 +63,7 @@
     >
       <el-table-column fixed="left" type="index" width="50px" label="序号" align="center"/>
       <el-table-column v-for="item in columnOption" :min-width="item.minWidth" :width="item.width"
-                       :column-key="item.columnKey"
-                       :label="item.label" :key="item.prop" :prop="item.propText">
+                       :column-key="item.columnKey" :label="item.label" :key="item.prop" :prop="item.propText">
         <template slot-scope="scope">
           <div @click="cellClickHandler(scope.row,item)" style="min-height: 30px" :style="{color:item.color}"
                v-show="!isEditingCell(scope.row._hiddenRowId,item.columnKey,item.editType)">
@@ -75,7 +74,6 @@
               <input v-if="item.editType==='Input'"
                      class="el-input el-input__inner"
                      style="width:100%"
-                     @focus="editCellFocusHandler"
                      @blur="editCellBlurHandler"
                      :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"
               />
@@ -83,7 +81,6 @@
                      class="el-input el-input__inner"
                      style="width:100%"
                      type="Number"
-                     @focus="editCellFocusHandler"
                      @blur="editCellBlurHandler"
                      :ref="buildCellRef(scope.row._hiddenRowId,item.columnKey)"
                      placeholder="输入数字"/>
@@ -132,6 +129,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
 
   export default {
     name: 'TableCellEdit',
@@ -144,10 +142,10 @@
           columnId: undefined,
           columnOption: undefined
         },
-        changedCellInfo: {// 已修改的单元格集合
+        changedCellInfo: {// 记录已修改单元格的集合
           // 'rowId': {//行标识
           //   'columnId1': 'propId1',//列标识 ： 列的数据字段
-          //   'columnId2': 'propId2',
+          //   'columnId2': 'propId2',//列标识 ： 列的数据字段
           // }
         },
         dataPrimaryKey: "id",//数据的主键字段，即区分每行数据的标识字段
@@ -160,7 +158,7 @@
             propText: 'text',
             editType: 'Input',
           }, {
-            columnKey: "column12",
+            columnKey: "column2",
             minWidth: "100px",
             label: '文字1',
             propId: 'text1',
@@ -198,21 +196,10 @@
             editType: 'Select',
             selectList: [//选择列表，需要在此提供列表数据
               {
-                value: 1,
-                label: '1黄金糕'
-              }, {
-                value: 2,
-                label: '2双皮奶'
-              }, {
-                value: 3,
-                label: '3蚵仔煎'
-              }, {
-                value: 4,
-                label: '4龙须面'
-              }, {
-                value: 5,
-                label: '5北京烤鸭'
-              }],
+                value: 10,
+                label: '这个选项会被fetchSelectListData()方法中的值覆盖'
+              },
+            ],
           },],
         //辅助参数，记录当前列表中最后一行的 行标识序号，新增时，新行参照这个序号继续增加
         newRowHiddenId: 1,
@@ -225,75 +212,60 @@
     created() {
       this.preventLeavingPage();
       this.fetchData();
+      this.fetchSelectListData()
     },
 
     methods: {
-      fetchData() {
+      refreshData() {
         if (JSON.stringify(this.changedCellInfo) !== ('{}')) {
           this.$confirm('检测到您有未提交保存的修改<br />刷新将<span style="color:#E6A23C;font-weight: bold">丢失未保存的修改</span>，是否继续？',
             {dangerouslyUseHTMLString: true})
             .then(() => {
-              this.doFetchData();
+              this.fetchData();
             })
             .catch(() => {
             });
         } else {
-          this.doFetchData();
+          this.fetchData();
         }
       },
-      doFetchData() {
-        this.resetCell();
-        {//TODO 模拟获取数据，与后台接口对接后不使用
-          if (this.tableData === undefined) {
-            this.tableData = [
-              {
-                id: 10001,
-                date: '2016-05-02',
-                text: '张三',
-                text1: 'ff',
-                number: 511,
-                textNoEdit: '不能编辑的列',
-                selectValue: 1,
-                selectName: '1黄金糕',
-              }, {
-                id: 10002,
-                date: '2017-05-04',
-                text: '李四',
-                text1: 'vv',
-                number: 11,
-                textNoEdit: '11',
-                selectValue: 2,
-                selectName: '2双皮奶',
-              }, {
-                id: 10003,
-                date: '2019-01-01',
-                text: '王五',
-                text1: 'cc',
-                number: 213,
-                textNoEdit: '一段文字',
-                selectValue: 3,
-                selectName: '3蚵仔煎',
-              }, {
-                id: 10004,
-                date: '2019-05-03',
-                text: '赵六',
-                text1: 'aa',
-                number: 151,
-                textNoEdit: '另一段文字',
-                selectValue: 4,
-                selectName: '4龙须面',
-              }];
-            this.$nextTick(() => {
-              this.tableData = JSON.parse(JSON.stringify(this.tableData));
-            })
-          } else {
-            this.tableData = JSON.parse(JSON.stringify(this.tableDataOrigin));
+      fetchData() {// 获取数据
+        axios.post('/getTableDataApi').then(({data}) => {
+          this.setTableData(data.tableData);
+        })
+      },
+      fetchSelectListData() {// 获取下拉列表数据
+        axios.post('/getSelectListDataApi').then(({data}) => {
+          this.columnOption.forEach(e => {
+            if (e.columnKey === 'column6') {
+              e.selectList = data.selectListData;
+            }
+          })
+        })
+      },
+      submitHandler() {//提交结果
+        let submitData = this.getEditResult();
+        axios.post('/setTableDataApi', submitData).then(({data}) => {
+          if (data.result) {
+            this.fetchData();
+            console.log('提交了信息', submitData);
+            this.$notify({
+              title: '提交成功，查看控制台',
+              type: 'success'
+            });
           }
-          this.initTableDataAndTableDataOrigin();
-        }
+        })
       },
       //---------------------------------------------以下为单元格编辑支持方法---------------------------------------------
-      getRowState(_hiddenRowId) {
+      setTableData(tableData) {//设置表格数据
+        this.resetCell();
+        this.tableData = tableData;
+        this.initTableDataAndTableDataOrigin();
+      },
+      getRowState(_hiddenRowId) {//使用_hiddenRowId获取当前行的状态，
+        // 已有数据初始或被修改过值得行，_hiddenRowId均为纯数字
+        // 被删除的行_hiddenRowId值为字母D开头
+        // 新增加的行_hiddenRowId值为字母A开头
         if (!_hiddenRowId) {
           return '';
         } else if (_hiddenRowId.startsWith('D')) {
@@ -315,7 +287,7 @@
       tableCellClassName({row, column, rowIndex, columnIndex}) {
         let classNames = '';
         if (this.changedCellInfo[row._hiddenRowId] && this.changedCellInfo[row._hiddenRowId][column.columnKey]) {
-          classNames += ' pre-update-cell';        //被修改的角标样式
+          classNames += ' pre-update-cell';        //被修改的单元格角标样式
         }
         return classNames;
       },
@@ -325,13 +297,12 @@
         this.newRowHiddenId++;
         return newRowHiddenId;
       },
-      //table原数据加自定义id列，留存副本 [需在获取数据后马上调用]
+      //table原数据加自定义_hiddenRowId列，单元格编辑的辅助定位参数。并留存原数据副本tableDataOrigin，用以编辑时撤销编辑，恢复内容[需在获取数据后马上调用]
       initTableDataAndTableDataOrigin() {
         let i = 1;
         for (let row of this.tableData) {
           //_hiddenRowId为定位行的辅助参数，请求的数据中不能包含此字段
-          row._hiddenRowId = (Array(16)
-            .join('0') + i).slice(-16);
+          this.$set(row, '_hiddenRowId', (Array(16).join('0') + i).slice(-16));
           i++;
         }
         this.tableDataOrigin = JSON.parse(JSON.stringify(this.tableData));
@@ -379,12 +350,20 @@
         };
         this.setEditKeyListener(false);
       },
-      //编辑中单元格 行文字选中，焦点获取
+      //编辑中单元格 焦点获取,文字选中
       editingCellFocusAndSelect() {
         let _hiddenRowId = this.editingCellInfo.rowId;
         let columnId = this.editingCellInfo.columnId;
         this.$nextTick(() => {
           //以row._hiddenRowId，column.columnKey，发现单元格。
+          if (this.editingCellInfo.columnOption) {
+            switch (this.editingCellInfo.columnOption.editType) {
+              case 'Input':
+              case 'InputNumber':
+                let cellValue = this.tableData.find(e => e._hiddenRowId === this.editingCellInfo.rowId)[this.editingCellInfo.columnOption.propId];
+                this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value = cellValue === undefined ? '' : cellValue;
+            }
+          }
           let cellEditorELArray = this.$refs[this.buildCellRef(_hiddenRowId, columnId)];
           if (cellEditorELArray && cellEditorELArray.length > 0) {
             if (cellEditorELArray[0].focus) {
@@ -396,16 +375,9 @@
           }
         });
       },
-      //单元格获取焦点事件（这个方法是专门为input控件编辑时使用的）
-      editCellFocusHandler() {
-        //input不再使用v-model绑定数值，避免实时更新导致渲染频繁问题（在表格内容多的时候尤为明显，输入每一个字都会卡）
-        this.$nextTick(() => {
-          let cellValue = this.tableData.find(e => e._hiddenRowId === this.editingCellInfo.rowId)[this.editingCellInfo.columnOption.propId];
-          this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value = cellValue === undefined ? '' : cellValue;
-        });
-      },
       //编辑中单元格失去焦点事件
       editCellBlurHandler() {
+        console.log("blur!!")
         this.setEditingValueToTableData();
         this.setEditingCellInfoToChangedCellInfo(this.checkEditingValueIsChanged());
       },
@@ -417,7 +389,7 @@
             case 'Input':
             case 'InputNumber':
               let changeValue = this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].value;
-              this.$set(row, columnOption.propId, columnOption.editType === 'InputNumber' ? Number(changeValue) : changeValue);
+              this.$set(row, columnOption.propId, changeValue);
               break;
             case 'Select':
             case 'SelectGroup':
@@ -496,8 +468,13 @@
               if (direction > 0 && next < columnOptionOnlyCanEdit.length || direction < 0 && next >= 0) {
                 //跳下一个单元格
                 if (columnOptionOnlyCanEdit[next]) {
-                  this.editCellBlurHandler();
                   this.$refs[this.buildCellRef(this.editingCellInfo.rowId, this.editingCellInfo.columnId)][0].blur();
+                  if (this.editingCellInfo.columnOption.editType === 'DatePicker') {
+                    //焦点到el-date-picker控件，使用方向键修改日期后，不使用回车选中，而是直接tab切换下一单元格不会触发blur事件，但选中的时间已经修改
+                    //在此直接调用一次blur事件
+                    //(el-select控件使用以上操作方式也不会触发blur，但其选中的值不会被改变，无需将其做类似处理)
+                    this.editCellBlurHandler();
+                  }
                   this.startEdit(undefined, columnOptionOnlyCanEdit[next]);
                 }
               } else {
@@ -641,11 +618,7 @@
       },
 
       addNewRowHandler() {
-        this.tableData.push(
-          {
-            _hiddenRowId: this.buildNewRowHiddenId(),
-          }
-        );
+        this.tableData.push({_hiddenRowId: this.buildNewRowHiddenId()});
       },
       deleteRowHandler(row) {
         if (row._hiddenRowId.startsWith('A')) {
@@ -654,32 +627,32 @@
               this.tableData.splice(rowIndex, 1);
             }
           }
-        } else if (row._hiddenRowId.startsWith('D')) {
+          return;
+        }
+        if (row._hiddenRowId.startsWith('D')) {
           if (this.changedCellInfo[row._hiddenRowId]) {
-            this.changedCellInfo[row._hiddenRowId.substring(1)] = JSON.parse(JSON.stringify(this.changedCellInfo[row._hiddenRowId]));
-            delete this.changedCellInfo[row._hiddenRowId];
+            this.$set(this.changedCellInfo, row._hiddenRowId.substring(1), JSON.parse(JSON.stringify(this.changedCellInfo[row._hiddenRowId])));
+            this.$delete(this.changedCellInfo, row._hiddenRowId);
           }
-          // this.$set(row,"_hiddenRowId",row._hiddenRowId.substring(1));
-          row._hiddenRowId = row._hiddenRowId.substring(1);
+          this.$set(row, "_hiddenRowId", row._hiddenRowId.substring(1));
         } else {
           if (this.changedCellInfo[row._hiddenRowId]) {
-            this.changedCellInfo['D' + row._hiddenRowId] = JSON.parse(JSON.stringify(this.changedCellInfo[row._hiddenRowId]));
-            delete this.changedCellInfo[row._hiddenRowId];
+            this.$set(this.changedCellInfo, 'D' + row._hiddenRowId, JSON.parse(JSON.stringify(this.changedCellInfo[row._hiddenRowId])));
+            this.$delete(this.changedCellInfo, row._hiddenRowId);
           }
-          // this.$set(row, '_hiddenRowId', 'D' + row._hiddenRowId);
-          row._hiddenRowId = 'D' + row._hiddenRowId;
+          this.$set(row, '_hiddenRowId', 'D' + row._hiddenRowId);
         }
       },
-      submitHandler() {
+      //获取编辑修改的结果
+      getEditResult() {
         this.finishEdit();
         let submitData = {
-          update: [],
-          add: [],
-          delete: [],
+          update: [],//更新的内容
+          add: [],//增加的内容
+          delete: [],//删除的内容
         };
         this.tableData.forEach(item => {
           if (item && item._hiddenRowId && item._hiddenRowId.length > 0) {
-            //update
             let itemTmp = JSON.parse(JSON.stringify(item));
             switch (item._hiddenRowId.substr(0, 1)) {
               case 'A':
@@ -709,37 +682,7 @@
             }
           }
         });
-        console.log('提交了信息', submitData);
-        this.$notify({
-          title: '查看控制台',
-          type: 'success'
-        });
-        {//TODO 模拟提交后数据结果，与后台交接后不使用
-          if (!this.lastTableId) {
-            for (let row of this.tableData) {
-              if (row.id) {
-                if (this.lastTableId) {
-                  this.lastTableId = Math.max(this.lastTableId, row.id);
-                } else {
-                  this.lastTableId = row.id;
-                }
-              }
-            }
-          }
-          this.tableData = this.tableData
-            .filter(row => {
-              return submitData.delete.indexOf(row.id) === -1;
-            });
-
-          this.tableData.forEach(row => {
-            if (!row.id) {
-              row.id = (++this.lastTableId);
-            }
-          });
-          this.initTableDataAndTableDataOrigin();
-        }
-        this.resetCell();
-        this.fetchData();
+        return submitData;
       },
       //重置记录单元格标记的对象
       resetCell() {
