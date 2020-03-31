@@ -248,7 +248,7 @@
         axios.post('/setTableDataApi', submitData).then(({data}) => {
           if (data.result) {
             this.fetchData();
-            console.log('提交了信息', submitData);
+            console.info('提交了信息', submitData);
             this.$notify({
               title: '提交成功，查看控制台',
               type: 'success'
@@ -377,7 +377,7 @@
       },
       //编辑中单元格失去焦点事件
       editCellBlurHandler() {
-        console.log("blur!!")
+        // console.log("blur!!")
         this.setEditingValueToTableData();
         this.setEditingCellInfoToChangedCellInfo(this.checkEditingValueIsChanged());
       },

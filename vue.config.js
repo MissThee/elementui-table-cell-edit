@@ -27,7 +27,7 @@ module.exports = {
       new UglifyJsPlugin({
         uglifyOptions: {
           // warnings: false,//见https://www.webpackjs.com/plugins/uglifyjs-webpack-plugin/
-          compress: {
+          compress: {//去除控制台输出
             drop_console: process.env.NODE_ENV === 'production', //console //见https://github.com/mishoo/UglifyJS2/tree/harmony#compress-options
             drop_debugger: process.env.NODE_ENV === 'production',
             pure_funcs: process.env.NODE_ENV === 'production' ? ['console.log'] : []
