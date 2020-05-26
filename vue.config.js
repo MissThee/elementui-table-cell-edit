@@ -40,10 +40,10 @@ module.exports = {
         'src': resolve('./src')
       }
     },
-    externals: {
-      'vue': 'Vue',
-      'element-ui': 'ELEMENT',
-    },
+    // externals: {
+    //   'vue': 'Vue',
+    //   'element-ui': 'ELEMENT',
+    // },
     devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : 'none',
   },
 };

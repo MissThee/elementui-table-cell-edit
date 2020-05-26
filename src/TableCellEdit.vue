@@ -642,6 +642,9 @@
           }
           this.$set(row, '_hiddenRowId', 'D' + row._hiddenRowId);
         }
+        //处理某些时候点删除，样式不更新的迷之操作
+        this.tableData.push({_hiddenRowId: this.buildNewRowHiddenId()});
+        this.tableData.pop();
       },
       //获取编辑修改的结果
       getEditResult() {
