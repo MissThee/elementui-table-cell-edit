@@ -765,6 +765,15 @@
     display: none;
   }
 
+  /*去除输入框内的左右空白*/
+  /deep/ .el-input--suffix .el-input__inner {
+    padding-right: 0;
+  }
+
+  /deep/ .el-input--prefix .el-input__inner {
+    padding-left: 0;
+  }
+
   /*缩小button中的padding*/
   .el-button--mini, .el-button--mini.is-round {
     padding: 5px 5px;
