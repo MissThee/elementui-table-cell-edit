@@ -767,11 +767,11 @@
 
   /*去除输入框内的左右空白*/
   /deep/ .el-input--suffix .el-input__inner {
-    padding-right: 0;
+    padding-right: 0 !important;
   }
 
   /deep/ .el-input--prefix .el-input__inner {
-    padding-left: 0;
+    padding-left: 0 !important;
   }
 
   /*缩小button中的padding*/

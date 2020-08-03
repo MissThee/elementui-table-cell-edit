@@ -1,11 +1,5 @@
 import Mock from 'mockjs';
 
-// 如果是get请求，可以在options.url中获取到，
-// 如果是post请求，可以在options.body中获取到。
-// Mock.mock('url','get',(options)=>{
-//   console.log(options)
-// })
-// Mock.mock( url, post/get , 返回的数据)；
 let selectListData = [
   {
     value: 1,
@@ -23,6 +17,13 @@ let selectListData = [
     value: 5,
     label: '5北京烤鸭'
   }];
+
+// 如果是get请求，可以在options.url中获取到，
+// 如果是post请求，可以在options.body中获取到。
+// Mock.mock('url','get',(options)=>{
+//   console.log(options)
+// })
+// Mock.mock( url, post/get , 返回的数据)；
 
 Mock.mock('/getSelectListDataApi', 'post',
   {
@@ -98,9 +99,17 @@ Mock.mock('/setTableDataApi', 'post', options => {
     for (let submitDataUpdateRow of submitData.update) {
       for (let tableDataRow of tableData) {
         if (tableDataRow.id === submitDataUpdateRow.id) {
+          console.log('submitDataUpdateRow!!', submitDataUpdateRow)
           for (let key in submitDataUpdateRow) {
             if (submitDataUpdateRow.hasOwnProperty(key)) {
               tableDataRow[key] = submitDataUpdateRow[key];
+              if (key === 'selectValue') {
+                for (let item of selectListData) {
+                  if(item.value===submitDataUpdateRow[key]){
+                    tableDataRow['selectName']=item.label
+                  }
+                }
+              }
             }
           }
         }
