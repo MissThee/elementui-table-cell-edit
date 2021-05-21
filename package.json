@@ -10,18 +10,14 @@
     "inspect": "vue inspect"
   },
   "dependencies": {
-    "axios": "^0.18.1",
-    "babel-polyfill": "^6.26.0",
-    "css-loader": "^3.1.0",
-    "element-ui": "^2.13.0",
+    "axios": "^0.21.1",
+    "element-ui": "^2.15.1",
     "mockjs": "^1.1.0",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "vue": "^2.6.10"
+    "vue": "^2.6.12"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.10.0",
-    "@vue/cli-service": "^3.10.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.12",
+    "@vue/cli-service": "^4.5.13"
   },
   "engines": {
     "node": ">= 6.0.0",

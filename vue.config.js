@@ -1,5 +1,4 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 function resolve(dir) {
   //此处使用path.resolve 或path.join 可自行调整
@@ -23,18 +22,6 @@ module.exports = {
   },
   publicPath: './',
   configureWebpack: {
-    plugins: [
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          // warnings: false,//见https://www.webpackjs.com/plugins/uglifyjs-webpack-plugin/
-          compress: {//去除控制台输出
-            drop_console: process.env.NODE_ENV === 'production', //console //见https://github.com/mishoo/UglifyJS2/tree/harmony#compress-options
-            drop_debugger: process.env.NODE_ENV === 'production',
-            pure_funcs: process.env.NODE_ENV === 'production' ? ['console.log'] : []
-          }
-        }
-      })
-    ],
     resolve: {
       alias: {
         'src': resolve('./src')

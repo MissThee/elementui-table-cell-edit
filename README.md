@@ -1,5 +1,5 @@
 # 简介
-> element-ui v2.13.0 table 组件行内编辑
+> element-ui v2.15.1 table 组件行内编辑
 > 预览地址 [https://missthee.github.io/elementui-table-cell-edit/dist/index.html](https://missthee.github.io/elementui-table-cell-edit/dist/index.html)
 
 非element-ui组件源码修改
