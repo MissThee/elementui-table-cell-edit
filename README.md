@@ -1,8 +1,6 @@
 # 简介
-> element-ui v2.15.1 table 组件行内编辑
+> element-ui v2.15.1 table 组件行内编辑(非element-ui组件源码修改，对table组件二次包装)
+>
 > 预览地址 [https://missthee.github.io/elementui-table-cell-edit/dist/index.html](https://missthee.github.io/elementui-table-cell-edit/dist/index.html)
 
-非element-ui组件源码修改
-
-普通element-ui的table组件数据多了容易卡顿，要支持大量数据展示/编辑，可自行替换为pl-table表格组件，仍可使用此套行内编辑逻辑。
 
